@@ -1,6 +1,5 @@
 package com.crm.auth.facade;
 
-import com.crm.sharedlib.annotations.Facade;
 import com.crm.auth.dto.request.RefreshJwtTokenRequest;
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
@@ -11,7 +10,9 @@ import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.JwtService;
 import com.crm.auth.service.RefreshTokenService;
 import com.crm.auth.service.UserService;
+import com.crm.auth.service.operation.UserCreatorService;
 import com.crm.auth.utils.JwtUtils;
+import com.crm.sharedlib.annotations.Facade;
 import com.crm.sharedlib.dto.response.AuthResponse;
 import com.crm.sharedlib.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ public class AuthenticationFacade {
 
     private final UserService userService;
 
+    private final UserCreatorService userCreatorService;
+
     public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String deviceInfo) {
 
         User user = userService.validateUserForSignInRequest(signInRequest);
@@ -39,7 +42,7 @@ public class AuthenticationFacade {
 
     public JwtAuthenticationResponse signUp(SignUpRequest request, String deviceInfo) {
 
-        User user = userService.createUser(request);
+        User user = userCreatorService.createUser(request);
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(deviceInfo, user);
 
@@ -60,6 +63,7 @@ public class AuthenticationFacade {
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
 
+    //TODO: move to separate service
     public AuthResponse authorize(String authorizationHeader) {
         String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
                 .orElseThrow(() -> new UnauthorizedException("Authorization header is empty"));
