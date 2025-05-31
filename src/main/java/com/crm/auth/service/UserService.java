@@ -5,13 +5,11 @@ import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.UserRepository;
-import com.crm.auth.utils.PasswordGenerator;
 import com.crm.sharedlib.exception.ConflictException;
 import com.crm.sharedlib.exception.ForbiddenException;
 import com.crm.sharedlib.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,21 +27,9 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    @Value("${app.password.length}")
-    private Integer passwordLength;
-
     @Transactional
     public User createUser(SignUpRequest userRequest) {
         User user = userMapper.toEntity(userRequest);
-
-        if (userRequest.getGeneratePassword()) {
-            String generatedPassword = PasswordGenerator.generatePassword(passwordLength);
-
-            log.info("Password of {} is {}",
-                    userRequest.getLogin(), userRequest.getPassword());
-
-            userRequest.setPassword(generatedPassword);
-        }
 
         user.setPassword(encoder.encode(userRequest.getPassword()));
 

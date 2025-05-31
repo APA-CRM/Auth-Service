@@ -7,9 +7,11 @@ import com.crm.auth.service.JwtService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import static io.restassured.RestAssured.given;
@@ -30,6 +32,9 @@ class AuthControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private JwtService jwtService;
+
+    @MockitoBean
+    private RabbitTemplate rabbitTemplate;
 
     @Test
     @DisplayName("Sign in with Auth API expected success")
