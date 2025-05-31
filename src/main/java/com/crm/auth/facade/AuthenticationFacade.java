@@ -1,6 +1,5 @@
 package com.crm.auth.facade;
 
-import com.crm.sharedlib.annotations.Facade;
 import com.crm.auth.dto.request.RefreshJwtTokenRequest;
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
@@ -12,6 +11,7 @@ import com.crm.auth.service.JwtService;
 import com.crm.auth.service.RefreshTokenService;
 import com.crm.auth.service.UserService;
 import com.crm.auth.utils.JwtUtils;
+import com.crm.sharedlib.annotations.Facade;
 import com.crm.sharedlib.dto.response.AuthResponse;
 import com.crm.sharedlib.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
