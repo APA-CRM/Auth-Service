@@ -1,0 +1,79 @@
+package com.crm.auth.service;
+
+import com.crm.auth.dto.request.SignInRequest;
+import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.mapper.UserMapper;
+import com.crm.auth.persistance.entity.User;
+import com.crm.auth.persistance.repository.UserRepository;
+import com.crm.auth.utils.PasswordGenerator;
+import com.crm.sharedlib.exception.ConflictException;
+import com.crm.sharedlib.exception.ForbiddenException;
+import com.crm.sharedlib.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder encoder;
+
+    private final UserMapper userMapper;
+
+    @Value("${app.password.length}")
+    private Integer passwordLength;
+
+    @Transactional
+    public User createUser(SignUpRequest userRequest) {
+        User user = userMapper.toEntity(userRequest);
+
+        if (userRequest.getGeneratePassword()) {
+            String generatedPassword = PasswordGenerator.generatePassword(passwordLength);
+
+            log.info("Password of {} is {}",
+                    userRequest.getLogin(), userRequest.getPassword());
+
+            userRequest.setPassword(generatedPassword);
+        }
+
+        user.setPassword(encoder.encode(userRequest.getPassword()));
+
+        if (userRepository.findByLogin(userRequest.getLogin()).isPresent()) {
+            throw new ConflictException("User with login %s already exists."
+                    .formatted(userRequest.getLogin())
+            );
+        }
+
+        return userRepository.save(user);
+    }
+
+    public User validateUserForSignInRequest(SignInRequest request) {
+        User user = userRepository.findByLogin(request.getLogin())
+                .orElseThrow(() -> new ForbiddenException("Wrong login or password"));
+
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw new ForbiddenException("Wrong login or password");
+        }
+
+        return user;
+    }
+
+    public List<User> getUsersByLoginStartsWith(String login) {
+        return userRepository.findByLoginStartingWithIgnoreCase(login);
+    }
+
+    public User getUserByIdOrThrowException(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
+    }
+
+}

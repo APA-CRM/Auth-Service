@@ -1,0 +1,35 @@
+package com.crm.auth.controller.internal;
+
+import com.crm.auth.facade.internal.InternalUsersFacade;
+import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
+import com.crm.sharedlib.dto.response.UserResponse;
+import com.crm.sharedlib.dto.response.UserWithRoleResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.web.PagedModel;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/internal/users")
+@RequiredArgsConstructor
+public class InternalUsersController {
+
+    private final InternalUsersFacade facade;
+
+    @PostMapping("/filter")
+    public PagedModel<UserWithRoleResponse> filterUsersOfOrganization(
+            @Valid
+            @RequestBody
+            UserWithRolesFilterRequest request
+    ) {
+        return facade.filterUsersOfOrganization(request);
+    }
+
+    @GetMapping("/{userId}")
+    public UserResponse getUserById(
+            @PathVariable("userId") Long userId
+    ) {
+        return facade.getUserById(userId);
+    }
+
+}
