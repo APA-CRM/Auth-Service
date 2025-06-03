@@ -26,8 +26,10 @@ public class SignUpRequest {
     @NotNull(message = "Email is required")
     private String email;
 
+    @NotBlank(message = "Firstname can't be blank")
     private String firstName;
 
+    @NotBlank(message = "Lastname can't be blank")
     private String lastName;
 
     @NotNull(message = "You need to choice password policy")
