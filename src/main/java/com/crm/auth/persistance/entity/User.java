@@ -35,7 +35,7 @@ public class User {
 
     private String lastName;
 
-    private String fullName = firstName + " " + lastName;
+    private String fullName;
 
     @CreatedDate
     private Instant createdAt;
