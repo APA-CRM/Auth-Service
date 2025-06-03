@@ -199,6 +199,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         request.setEmail("test@gmail.com");
         request.setLogin("login");
         request.setFirstName("Jack");
+        request.setLastName("Pork");
         request.setGeneratePassword(true);
 
         given()
