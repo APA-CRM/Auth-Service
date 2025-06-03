@@ -33,6 +33,7 @@ public abstract class UserMapper {
 
     @Mapping(expression = "java(trimName(request.getFirstName()))", target = "firstName")
     @Mapping(expression = "java(trimName(request.getLastName()))", target = "lastName")
+    @Mapping(expression = "java(buildFullName(request.getFirstName(),request.getLastName()))", target = "fullName")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updateAt", ignore = true)
@@ -46,6 +47,10 @@ public abstract class UserMapper {
 
         return null;
     }
+
+    protected String buildFullName(String firstName, String lastName) {
+        return (firstName.trim() + " " + lastName.trim());
+}
 
     protected List<RoleLightResponse> getLightRoles(List<Role> roles) {
         if (isNull(roles)) {
@@ -67,7 +72,7 @@ public abstract class UserMapper {
         } else if (isNull(user.getFirstName())) {
             return user.getLastName();
         } else {
-            return user.getFirstName() + " " + user.getLastName();
+            return user.getFullName();
         }
     }
 
