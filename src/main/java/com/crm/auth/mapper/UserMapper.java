@@ -23,7 +23,6 @@ public abstract class UserMapper {
     @Autowired
     protected RoleMapper roleMapper;
 
-    @Mapping(expression = "java(getFullNameOfUser(user))", target = "fullName")
     public abstract UserResponse toDto(User user);
 
     @Mapping(expression = "java(getLightRoles(roles))", target = "roles")
