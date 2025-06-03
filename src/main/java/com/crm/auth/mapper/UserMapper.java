@@ -50,7 +50,7 @@ public abstract class UserMapper {
 
     protected String buildFullName(String firstName, String lastName) {
         return (firstName.trim() + " " + lastName.trim());
-}
+    }
 
     protected List<RoleLightResponse> getLightRoles(List<Role> roles) {
         if (isNull(roles)) {
