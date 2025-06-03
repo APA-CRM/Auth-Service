@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class UserMapper {
@@ -28,7 +27,6 @@ public abstract class UserMapper {
     public abstract UserResponse toDto(User user);
 
     @Mapping(expression = "java(getLightRoles(roles))", target = "roles")
-    @Mapping(expression = "java(getFullNameOfUser(user))", target = "fullName")
     public abstract UserWithRoleResponse toUserWithRoleResponse(User user, @Nullable List<Role> roles);
 
     @Mapping(expression = "java(trimName(request.getFirstName()))", target = "firstName")
@@ -60,20 +58,6 @@ public abstract class UserMapper {
         return roles.stream()
                 .map(roleMapper::toLightDto)
                 .toList();
-    }
-
-    protected String getFullNameOfUser(User user) {
-        if (isNull(user.getFirstName()) && isNull(user.getLastName())) {
-            return null;
-        }
-
-        if (nonNull(user.getFirstName()) && isNull(user.getLastName())) {
-            return user.getFirstName();
-        } else if (isNull(user.getFirstName())) {
-            return user.getLastName();
-        } else {
-            return user.getFullName();
-        }
     }
 
 }
