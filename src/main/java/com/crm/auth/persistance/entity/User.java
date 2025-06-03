@@ -35,6 +35,8 @@ public class User {
 
     private String lastName;
 
+    private String fullName;
+
     @CreatedDate
     private Instant createdAt;
 

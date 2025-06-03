@@ -23,8 +23,8 @@ public class UserFacade {
         return userMapper.toDto(user);
     }
 
-    public List<UserResponse> getUsersByLogin(String login) {
-        List<User> users = userService.getUsersByLoginStartsWith(login.trim());
+    public List<UserResponse> getUsersByFullName(String fullName) {
+        List<User> users = userService.getUsersByFullNameStartsWith(fullName.trim());
 
         return users.stream()
                 .map(userMapper::toDto)

@@ -53,8 +53,8 @@ public class UserService {
         return user;
     }
 
-    public List<User> getUsersByLoginStartsWith(String login) {
-        return userRepository.findByLoginStartingWithIgnoreCase(login);
+    public List<User> getUsersByFullNameStartsWith(String fullName) {
+        return userRepository.findByFullNameStartingWithIgnoreCase(fullName);
     }
 
     public User getUserByIdOrThrowException(Long userId) {

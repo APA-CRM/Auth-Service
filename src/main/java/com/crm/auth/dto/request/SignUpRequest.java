@@ -1,6 +1,5 @@
 package com.crm.auth.dto.request;
 
-import com.crm.auth.validation.FullNameConstraint;
 import com.crm.auth.validation.SignUpConstraint;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
@@ -17,7 +16,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @SignUpConstraint(message = "Password is empty")
-@FullNameConstraint
 public class SignUpRequest {
 
     @NotBlank(message = "Login can't be blank")
@@ -28,8 +26,10 @@ public class SignUpRequest {
     @NotNull(message = "Email is required")
     private String email;
 
+    @NotBlank(message = "First Name can't be blank")
     private String firstName;
 
+    @NotBlank(message = "Last Name can't be blank")
     private String lastName;
 
     @NotNull(message = "You need to choice password policy")

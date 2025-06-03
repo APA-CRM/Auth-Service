@@ -59,15 +59,15 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get user by login expected success response")
-    public void getUserByLoginExpectedSuccess() {
+    @DisplayName("Get user by Full Name expected success response")
+    public void getUserByFullNameExpectedSuccess() {
 
         final int userId = 101;
 
         given()
                 .contentType(ContentType.JSON)
                 .header(USER_ID_HEADER_NAME, userId)
-                .param("login", "log")
+                .param("fullName", "Serious Sam")
                 .when()
                 .get(BASE_URI)
                 .then()

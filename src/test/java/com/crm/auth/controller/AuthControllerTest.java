@@ -199,6 +199,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         request.setEmail("test@gmail.com");
         request.setLogin("login");
         request.setFirstName("Jack");
+        request.setLastName("Pork");
         request.setGeneratePassword(true);
 
         given()
@@ -213,27 +214,6 @@ class AuthControllerTest extends BaseIntegrationTest {
                 .body("token", notNullValue())
                 .body("refreshToken", notNullValue())
                 .body("tokenType", notNullValue());
-    }
-
-    @Test
-    @DisplayName("Sign up request when first name and last name is not specified expected bad request")
-    public void signUpWhenFirstAndLastNamesIsNotSpecifiedExpectedBadRequest() {
-        SignUpRequest request = new SignUpRequest();
-
-        request.setEmail("test@gmail.com");
-        request.setLogin("login");
-        request.setGeneratePassword(true);
-
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .body(request)
-                .post(BASE_URI + "/sign-up")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .body("message", is("First name or last name must be not empty"));
     }
 
 }

@@ -25,10 +25,10 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserResponse> getUsersByLogin(
-            @RequestParam("login") String login
+    public List<UserResponse> getUsersByFullName(
+            @RequestParam("fullName") String fullName
     ) {
-        return facade.getUsersByLogin(login);
+        return facade.getUsersByFullName(fullName);
     }
 
 }

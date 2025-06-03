@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class UserMapper {
@@ -24,15 +23,14 @@ public abstract class UserMapper {
     @Autowired
     protected RoleMapper roleMapper;
 
-    @Mapping(expression = "java(getFullNameOfUser(user))", target = "fullName")
     public abstract UserResponse toDto(User user);
 
     @Mapping(expression = "java(getLightRoles(roles))", target = "roles")
-    @Mapping(expression = "java(getFullNameOfUser(user))", target = "fullName")
     public abstract UserWithRoleResponse toUserWithRoleResponse(User user, @Nullable List<Role> roles);
 
     @Mapping(expression = "java(trimName(request.getFirstName()))", target = "firstName")
     @Mapping(expression = "java(trimName(request.getLastName()))", target = "lastName")
+    @Mapping(expression = "java(buildFullName(request.getFirstName(),request.getLastName()))", target = "fullName")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updateAt", ignore = true)
@@ -47,6 +45,10 @@ public abstract class UserMapper {
         return null;
     }
 
+    protected String buildFullName(String firstName, String lastName) {
+        return (firstName.trim() + " " + lastName.trim());
+    }
+
     protected List<RoleLightResponse> getLightRoles(List<Role> roles) {
         if (isNull(roles)) {
             return null;
@@ -55,20 +57,6 @@ public abstract class UserMapper {
         return roles.stream()
                 .map(roleMapper::toLightDto)
                 .toList();
-    }
-
-    protected String getFullNameOfUser(User user) {
-        if (isNull(user.getFirstName()) && isNull(user.getLastName())) {
-            return null;
-        }
-
-        if (nonNull(user.getFirstName()) && isNull(user.getLastName())) {
-            return user.getFirstName();
-        } else if (isNull(user.getFirstName())) {
-            return user.getLastName();
-        } else {
-            return user.getFirstName() + " " + user.getLastName();
-        }
     }
 
 }
