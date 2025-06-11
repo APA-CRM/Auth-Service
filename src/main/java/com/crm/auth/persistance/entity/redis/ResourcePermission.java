@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,6 +18,6 @@ public class ResourcePermission implements Serializable {
 
     private Resource resource;
 
-    private List<Action> actions;
+    private Set<Action> actions;
 
 }

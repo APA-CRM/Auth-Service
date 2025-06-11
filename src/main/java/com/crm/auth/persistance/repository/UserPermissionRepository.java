@@ -1,13 +1,11 @@
 package com.crm.auth.persistance.repository;
 
-import com.crm.auth.persistance.entity.redis.ResourcePermission;
 import com.crm.auth.persistance.entity.redis.UserPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -19,20 +17,16 @@ public class UserPermissionRepository {
     @Value("${app.redis.user-permission.ttl}")
     private Integer userPermissionTtl;
 
-    public UserPermission save(
+    public void save(
             Long organizationId,
             Long userId,
-            List<ResourcePermission> resourcePermission
+            UserPermission userPermission
     ) {
         String key = getFormatedKey(organizationId, userId);
 
-        UserPermission value = new UserPermission(resourcePermission);
-
         redisTemplate
                 .opsForValue()
-                .set(key, value, userPermissionTtl, TimeUnit.SECONDS);
-
-        return value;
+                .set(key, userPermission, userPermissionTtl, TimeUnit.SECONDS);
     }
 
     public UserPermission findById(Long organizationId, Long userId) {
