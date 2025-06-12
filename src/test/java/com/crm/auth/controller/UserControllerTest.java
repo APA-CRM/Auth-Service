@@ -1,5 +1,6 @@
 package com.crm.auth.controller;
 
+import com.crm.auth.BaseIntegrationTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

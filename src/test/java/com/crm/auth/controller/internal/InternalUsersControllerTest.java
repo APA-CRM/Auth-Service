@@ -1,6 +1,6 @@
 package com.crm.auth.controller.internal;
 
-import com.crm.auth.controller.BaseIntegrationTest;
+import com.crm.auth.BaseIntegrationTest;
 import com.crm.sharedlib.dto.DateRange;
 import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
 import com.crm.sharedlib.dto.response.UserAndRoles;
