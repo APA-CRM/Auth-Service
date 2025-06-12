@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -29,10 +30,12 @@ public class UserPermissionRepository {
                 .set(key, userPermission, userPermissionTtl, TimeUnit.SECONDS);
     }
 
-    public UserPermission findById(Long organizationId, Long userId) {
-        return redisTemplate
-                .opsForValue()
-                .get(getFormatedKey(organizationId, userId));
+    public Optional<UserPermission> findById(Long organizationId, Long userId) {
+        return Optional.ofNullable(
+                redisTemplate
+                        .opsForValue()
+                        .get(getFormatedKey(organizationId, userId))
+        );
     }
 
 
