@@ -1,4 +1,4 @@
-package com.crm.auth.controller;
+package com.crm.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;

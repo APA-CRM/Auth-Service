@@ -1,5 +1,6 @@
 package com.crm.auth.controller;
 
+import com.crm.auth.BaseIntegrationTest;
 import com.crm.auth.dto.request.RefreshJwtTokenRequest;
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
