@@ -16,14 +16,14 @@ public class ResourceToUriValidator {
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
     private static final Map<Resource, List<String>> RESOURCE_TO_URI = Map.of(
-            USERS, Collections.singletonList("/api/organizations/*/users/**"),
-            ROLES, Collections.singletonList("/api/organizations/*/roles/**"),
-            ORGANIZATIONS, Collections.singletonList("/api/organizations/**"),
             ALL, List.of(
                     "/api/organizations/*/users/**",
                     "/api/organizations/*/roles/**",
                     "/api/organizations/**"
-            )
+            ),
+            USERS, Collections.singletonList("/api/organizations/*/users/**"),
+            ROLES, Collections.singletonList("/api/organizations/*/roles/**"),
+            ORGANIZATIONS, Collections.singletonList("/api/organizations/**")
     );
 
     public static boolean isValidResourceToUri(String uri, List<Resource> resources) {

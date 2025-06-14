@@ -53,7 +53,8 @@ public class AccessControlMapper {
 
     private ResourcePermission createResource(Resource resource, Set<Action> actions) {
 
-        Set<Action> checkedActions = checkIfAllBasicActionPresent(actions);
+        List<Action> checkedActions = checkIfAllBasicActionPresent(actions)
+                .stream().toList();
 
         ResourcePermission response = new ResourcePermission();
         response.setResource(resource);

@@ -5,12 +5,14 @@ import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.facade.AuthenticationFacade;
+import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.AuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import static com.crm.sharedlib.consts.CrmConstants.ORGANIZATION_ID_HEADER_NAME;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @RestController
@@ -53,12 +55,15 @@ public class AuthController {
         return authenticationFacade.refreshJwtToken(request, deviceInfo);
     }
 
-    @GetMapping("/authorize")
+    @PostMapping("/authorize")
     public AuthResponse authorize(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false)
-            String authorizationHeader
+            @RequestHeader(value = AUTHORIZATION, required = false)
+            String authorizationHeader,
+            @RequestHeader(value = ORGANIZATION_ID_HEADER_NAME, required = false)
+            Long organizationId,
+            @RequestBody AuthorizationRequest request
     ) {
-        return authenticationFacade.authorize(authorizationHeader);
+        return authenticationFacade.authorize(authorizationHeader, organizationId, request);
     }
 
 }

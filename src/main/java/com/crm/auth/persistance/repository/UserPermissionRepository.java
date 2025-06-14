@@ -40,7 +40,7 @@ public class UserPermissionRepository {
 
 
     private String getFormatedKey(Long organizationId, Long userId) {
-        return "organization:%d:user:%d".formatted(organizationId, userId);
+        return "organization:%d:user:%d:permissions".formatted(organizationId, userId);
     }
 
 }
