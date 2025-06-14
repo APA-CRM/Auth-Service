@@ -7,7 +7,7 @@ import com.crm.auth.utils.ResourceToUriValidator;
 import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.enums.Action;
 import com.crm.sharedlib.enums.Resource;
-import com.crm.sharedlib.exception.UnauthorizedException;
+import com.crm.sharedlib.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class PermissionChecker {
         boolean isValidUri = ResourceToUriValidator.isValidResourceToUri(request.getUri(), resources);
 
         if (!(isValidHttpMethod && isValidUri)) {
-            throw new UnauthorizedException("You can't access this resource");
+            throw new ForbiddenException("You can't access this resource");
         }
 
     }
