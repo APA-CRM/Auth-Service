@@ -55,15 +55,23 @@ public class AuthController {
         return authenticationFacade.refreshJwtToken(request, deviceInfo);
     }
 
-    @PostMapping("/authorize")
+    @GetMapping("authorize")
     public AuthResponse authorize(
+            @RequestHeader(value = AUTHORIZATION, required = false)
+            String authorizationHeader
+    ) {
+        return authenticationFacade.authorize(authorizationHeader);
+    }
+
+    @PostMapping("/check-access")
+    public AuthResponse authorizeAndCheckAccess(
             @RequestHeader(value = AUTHORIZATION, required = false)
             String authorizationHeader,
             @RequestHeader(value = ORGANIZATION_ID_HEADER_NAME, required = false)
             Long organizationId,
             @RequestBody AuthorizationRequest request
     ) {
-        return authenticationFacade.authorize(authorizationHeader, organizationId, request);
+        return authenticationFacade.authorizeAndCheckAccess(authorizationHeader, organizationId, request);
     }
 
 }

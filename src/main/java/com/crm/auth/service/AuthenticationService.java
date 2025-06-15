@@ -28,12 +28,16 @@ public class AuthenticationService {
     private final MainClient mainClient;
 
     public String getTokenAndValidate(String authorizationHeader, Long organizationId) {
-        String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
-                .orElseThrow(() -> new UnauthorizedException("Authorization header is empty"));
-
         if (isNull(organizationId)) {
             throw new UnauthorizedException("Organization id is not specified");
         }
+
+        return getTokenAndValidate(authorizationHeader);
+    }
+
+    public String getTokenAndValidate(String authorizationHeader) {
+        String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
+                .orElseThrow(() -> new UnauthorizedException("Authorization header is empty"));
 
         boolean expired = jwtService.isExpired(token);
 
@@ -44,7 +48,11 @@ public class AuthenticationService {
         return token;
     }
 
-    public AuthResponse authorize(String token, Long organizationId, AuthorizationRequest request) {
+    public AuthResponse authorize(String token) {
+        return jwtService.getPayloadFromJwtToken(token);
+    }
+
+    public AuthResponse authorizeAndCheckAccess(String token, Long organizationId, AuthorizationRequest request) {
 
         AuthResponse payload = jwtService.getPayloadFromJwtToken(token);
 

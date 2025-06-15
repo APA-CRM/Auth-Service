@@ -65,13 +65,19 @@ public class AuthenticationFacade {
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
 
-    public AuthResponse authorize(
+    public AuthResponse authorize(String authorizationHeader) {
+        String token = authenticationService.getTokenAndValidate(authorizationHeader);
+
+        return authenticationService.authorize(token);
+    }
+
+    public AuthResponse authorizeAndCheckAccess(
             String authorizationHeader, Long organizationId,
             AuthorizationRequest request
     ) {
         String token = authenticationService.getTokenAndValidate(authorizationHeader, organizationId);
 
-        return authenticationService.authorize(token, organizationId, request);
+        return authenticationService.authorizeAndCheckAccess(token, organizationId, request);
     }
 
 }
