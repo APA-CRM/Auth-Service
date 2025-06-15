@@ -193,8 +193,8 @@ class AuthControllerTest extends BaseIntegrationTest {
     public class AuthorizationTest {
 
         @Test
-        @DisplayName("Authorize expected success")
-        public void authorizeExpectedSuccess() {
+        @DisplayName("Authorize and check access expected success")
+        public void authorizeAndCheckAccessExpectedSuccess() {
             final String token = jwtService.generateToken(1L, "login");
 
             AuthorizationRequest request = new AuthorizationRequest();
@@ -223,7 +223,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .header(ORGANIZATION_ID_HEADER_NAME, 1)
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
@@ -234,7 +234,25 @@ class AuthControllerTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Authorize expected success")
-        public void authorizeWhenUserPermissionIsNotInCacheExpectedSuccess() {
+        public void authorizeExpectedSuccess() {
+            final String token = jwtService.generateToken(1L, "login");
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .when()
+                    .get(BASE_URI + "/authorize")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("id", is(1))
+                    .body("login", is("login"));
+        }
+
+        @Test
+        @DisplayName("Authorize and check access expected success")
+        public void authorizeAndCheckAccessWhenUserPermissionIsNotInCacheExpectedSuccess() {
             final String token = jwtService.generateToken(1L, "login");
 
             AuthorizationRequest request = new AuthorizationRequest();
@@ -270,7 +288,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .header(ORGANIZATION_ID_HEADER_NAME, 1)
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
@@ -288,8 +306,8 @@ class AuthControllerTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Authorize when doesn't have permission to resource expected forbidden")
-        public void authorizeWhenDoesNotHavePermissionExpectedForbidden() {
+        @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
+        public void authorizeAndCheckAccessWhenDoesNotHavePermissionExpectedForbidden() {
             final String token = jwtService.generateToken(1L, "login");
 
             AuthorizationRequest request = new AuthorizationRequest();
@@ -313,7 +331,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .header(ORGANIZATION_ID_HEADER_NAME, 1)
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
@@ -322,8 +340,8 @@ class AuthControllerTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Authorize when authorization header is not specified expected bad request")
-        public void authorizeWhenAuthorizationHeaderIsNotSpecifiedExpectedBadRequest() {
+        @DisplayName("Authorize and check access when authorization header is not specified expected bad request")
+        public void authorizeAndCheckAccessWhenAuthorizationHeaderIsNotSpecifiedExpectedBadRequest() {
 
             AuthorizationRequest request = new AuthorizationRequest();
 
@@ -332,9 +350,10 @@ class AuthControllerTest extends BaseIntegrationTest {
 
             given()
                     .contentType(ContentType.JSON)
+                    .header(ORGANIZATION_ID_HEADER_NAME, "1")
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
@@ -343,8 +362,8 @@ class AuthControllerTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Authorize when authorization header is not specified expected bad request")
-        public void authorizeWhenOrganizationIdHeaderIsNotSpecifiedExpectedBadRequest() {
+        @DisplayName("Authorize and check access when authorization header is not specified expected bad request")
+        public void authorizeAndCheckAccessWhenOrganizationIdHeaderIsNotSpecifiedExpectedBadRequest() {
 
             AuthorizationRequest request = new AuthorizationRequest();
 
@@ -356,7 +375,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer null")
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
@@ -365,8 +384,8 @@ class AuthControllerTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Get claims when token is expired expected unauthorized")
-        public void getClaimsWhenTokenIsExpiredExpectedUnauthorized() {
+        @DisplayName("Authorize and check access when token is expired expected unauthorized")
+        public void authorizeAndCheckAccessWhenTokenIsExpiredExpectedUnauthorized() {
             final String expiredtoken = "eyJhbGciOiJIUzUxMiJ9" +
                     ".eyJ1c2VySWQiOjEsImxvZ2luIjoiUGF2ZWwiLCJpYXQiOjE3NDI0MDg5MTQsImV4cCI6MTc0MjQxMDcxNH0.aR8_oJiy_S" +
                     "7ef6O9D_8nJqAj0wMLTW65I2dbMN-WH_5AwvaxMiNlgRGjVuTdXq5m4ybeH-DPeTKEW6YWGibCZg";
@@ -382,7 +401,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .header(ORGANIZATION_ID_HEADER_NAME, 1)
                     .when()
                     .body(request)
-                    .post(BASE_URI + "/authorize")
+                    .post(BASE_URI + "/check-access")
                     .then()
                     .log().all()
                     .assertThat()
