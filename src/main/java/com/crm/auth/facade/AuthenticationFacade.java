@@ -7,14 +7,14 @@ import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.enums.TokenType;
 import com.crm.auth.persistance.entity.RefreshToken;
 import com.crm.auth.persistance.entity.User;
+import com.crm.auth.service.AuthenticationService;
 import com.crm.auth.service.JwtService;
 import com.crm.auth.service.RefreshTokenService;
 import com.crm.auth.service.UserService;
 import com.crm.auth.service.operation.UserCreatorService;
-import com.crm.auth.utils.JwtUtils;
 import com.crm.sharedlib.annotations.Facade;
+import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.AuthResponse;
-import com.crm.sharedlib.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 
 @Facade
@@ -28,6 +28,8 @@ public class AuthenticationFacade {
     private final UserService userService;
 
     private final UserCreatorService userCreatorService;
+
+    private final AuthenticationService authenticationService;
 
     public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String deviceInfo) {
 
@@ -63,18 +65,19 @@ public class AuthenticationFacade {
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
 
-    //TODO: move to separate service
     public AuthResponse authorize(String authorizationHeader) {
-        String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
-                .orElseThrow(() -> new UnauthorizedException("Authorization header is empty"));
+        String token = authenticationService.getTokenAndValidate(authorizationHeader);
 
-        boolean expired = jwtService.isExpired(token);
+        return authenticationService.authorize(token);
+    }
 
-        if (expired) {
-            throw new UnauthorizedException("Jwt token is expired");
-        }
+    public AuthResponse authorizeAndCheckAccess(
+            String authorizationHeader, Long organizationId,
+            AuthorizationRequest request
+    ) {
+        String token = authenticationService.getTokenAndValidate(authorizationHeader, organizationId);
 
-        return jwtService.getPayloadFromJwtToken(token);
+        return authenticationService.authorizeAndCheckAccess(token, organizationId, request);
     }
 
 }

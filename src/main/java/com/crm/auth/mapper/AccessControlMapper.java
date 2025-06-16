@@ -23,21 +23,19 @@ public class AccessControlMapper {
         Map<Resource, Set<Action>> groupedActions = new HashMap<>();
 
         for (Role role : roles) {
-
             fillGroupedResources(role, groupedActions);
+        }
 
-            if (groupedActions.containsKey(Resource.ALL)) {
-                ResourcePermission resource = createResource(Resource.ALL, groupedActions.get(Resource.ALL));
+        if (groupedActions.containsKey(Resource.ALL)) {
+            ResourcePermission resource = createResource(Resource.ALL, groupedActions.get(Resource.ALL));
+
+            list.add(resource);
+        } else {
+            for (Map.Entry<Resource, Set<Action>> entry : groupedActions.entrySet()) {
+                ResourcePermission resource = createResource(entry.getKey(), entry.getValue());
 
                 list.add(resource);
-            } else {
-                for (Map.Entry<Resource, Set<Action>> entry : groupedActions.entrySet()) {
-                    ResourcePermission resource = createResource(entry.getKey(), entry.getValue());
-
-                    list.add(resource);
-                }
             }
-
         }
 
         return list;
@@ -53,7 +51,8 @@ public class AccessControlMapper {
 
     private ResourcePermission createResource(Resource resource, Set<Action> actions) {
 
-        Set<Action> checkedActions = checkIfAllBasicActionPresent(actions);
+        List<Action> checkedActions = checkIfAllBasicActionPresent(actions)
+                .stream().toList();
 
         ResourcePermission response = new ResourcePermission();
         response.setResource(resource);
