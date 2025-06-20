@@ -2,8 +2,8 @@ package com.crm.auth.facade.internal;
 
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
-import com.crm.auth.service.filter.UserFilterService;
 import com.crm.auth.service.UserService;
+import com.crm.auth.service.filter.UserFilterService;
 import com.crm.sharedlib.annotations.Facade;
 import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
 import com.crm.sharedlib.dto.response.UserResponse;

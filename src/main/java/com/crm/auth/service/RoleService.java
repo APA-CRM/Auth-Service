@@ -4,6 +4,7 @@ import com.crm.auth.persistance.entity.AccessControl;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.repository.RoleRepository;
 import com.crm.sharedlib.dto.request.RoleRequest;
+import com.crm.sharedlib.exception.ForbiddenException;
 import com.crm.sharedlib.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,11 @@ public class RoleService {
     private final RoleRepository roleRepository;
 
     @Transactional
-    public Role createRole(String name) {
+    public Role createRole(String name, boolean isDeletable) {
         Role role = new Role();
 
         role.setName(name);
+        role.setIsDeletable(isDeletable);
 
         return roleRepository.save(role);
     }
@@ -46,6 +48,10 @@ public class RoleService {
 
     @Transactional
     public void deleteRole(Role role) {
+        if (!role.getIsDeletable()) {
+            throw new ForbiddenException("This role can't be deleted");
+        }
+
         roleRepository.delete(role);
     }
 
