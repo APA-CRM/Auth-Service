@@ -1,6 +1,7 @@
 package com.crm.auth.controller.internal;
 
 import com.crm.auth.facade.internal.InternalRoleFacade;
+import com.crm.sharedlib.dto.request.CreateRoleRequest;
 import com.crm.sharedlib.dto.request.RoleFilterRequest;
 import com.crm.sharedlib.dto.request.RoleRequest;
 import com.crm.sharedlib.dto.response.RoleResponse;
@@ -30,7 +31,7 @@ public class InternalRolesController {
     public RoleResponse createRole(
             @Valid
             @RequestBody
-            RoleRequest request
+            CreateRoleRequest request
     ) {
         return facade.createRole(request);
     }

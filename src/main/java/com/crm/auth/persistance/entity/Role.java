@@ -26,6 +26,9 @@ public class Role {
 
     private String name;
 
+    @Column(nullable = false)
+    private Boolean isDeletable;
+
     @OneToMany(
             fetch = FetchType.EAGER,
             mappedBy = "role",

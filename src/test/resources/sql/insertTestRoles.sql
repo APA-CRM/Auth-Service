@@ -1,8 +1,8 @@
 INSERT INTO role(
-    id, name
+    id, name, is_deletable
 ) VALUES
-(100, 'Admin'),
-(200, 'Manager');
+(100, 'Admin', false),
+(200, 'Manager', true);
 
 INSERT INTO access_control(
    id, role_id, resource, action

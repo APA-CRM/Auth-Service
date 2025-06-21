@@ -1,6 +1,6 @@
 package com.crm.auth.service.producer;
 
-import com.crm.sharedlib.dto.amqp.SendPasswordEmail;
+import com.crm.sharedlib.dto.amqp.SendPasswordByEmailEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class SendPasswordToEmailProducer {
     private final RabbitTemplate rabbitTemplate;
 
     public void sendPassword(String email, String password) {
-        SendPasswordEmail message = new SendPasswordEmail(email, password);
+        SendPasswordByEmailEvent message = new SendPasswordByEmailEvent(email, password);
 
         rabbitTemplate.convertAndSend(AUTH_TOPIC_EXCHANGE_NAME, RANDOM_PASSWORD_BINDING_NAME, message);
     }

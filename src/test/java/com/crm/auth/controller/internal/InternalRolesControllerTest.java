@@ -2,6 +2,7 @@ package com.crm.auth.controller.internal;
 
 
 import com.crm.auth.BaseIntegrationTest;
+import com.crm.sharedlib.dto.request.CreateRoleRequest;
 import com.crm.sharedlib.dto.request.ResourceWithActionsRequest;
 import com.crm.sharedlib.dto.request.RoleFilterRequest;
 import com.crm.sharedlib.dto.request.RoleRequest;
@@ -38,9 +39,10 @@ class InternalRolesControllerTest extends BaseIntegrationTest {
         resource2.setResource(Resource.ORGANIZATIONS);
         resource2.setActions(Collections.singletonList(Action.ALL));
 
-        RoleRequest request = new RoleRequest();
+        CreateRoleRequest request = new CreateRoleRequest();
 
         request.setName("Admin");
+        request.setIsDeletable(false);
         request.setResources(List.of(resource1, resource2));
 
         given()
@@ -71,9 +73,10 @@ class InternalRolesControllerTest extends BaseIntegrationTest {
         resource.setResource(Resource.ALL);
         resource.setActions(List.of(Action.ALL));
 
-        RoleRequest request = new RoleRequest();
+        CreateRoleRequest request = new CreateRoleRequest();
 
         request.setName("Admin");
+        request.setIsDeletable(false);
         request.setResources(Collections.singletonList(resource));
 
         given()
@@ -111,9 +114,10 @@ class InternalRolesControllerTest extends BaseIntegrationTest {
         resource3.setResource(Resource.ALL);
         resource3.setActions(Collections.singletonList(Action.ALL));
 
-        RoleRequest request = new RoleRequest();
+        CreateRoleRequest request = new CreateRoleRequest();
 
         request.setName("Admin");
+        request.setIsDeletable(false);
         request.setResources(List.of(resource1, resource2, resource3));
 
         given()
@@ -247,6 +251,22 @@ class InternalRolesControllerTest extends BaseIntegrationTest {
                 .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    @DisplayName("Delete role when role is undeletable expected forbidden response")
+    public void deleteRoleWhenRoleIsUndeletableExpectedForbidden() {
+        final int roleId = 100;
+
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(BASE_URI + "/{roleId}", roleId)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value())
+                .body("message", is("This role can't be deleted"));
     }
 
 }

@@ -1,9 +1,10 @@
-package com.crm.auth.service;
+package com.crm.auth.service.filter;
 
 import com.crm.auth.filter.UserFilter;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.entity.User;
+import com.crm.auth.service.RoleService;
 import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
 import com.crm.sharedlib.dto.response.UserAndRoles;
 import com.crm.sharedlib.dto.response.UserWithRoleResponse;

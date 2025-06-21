@@ -7,6 +7,7 @@ import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.service.AccessControlService;
 import com.crm.auth.service.RoleService;
 import com.crm.sharedlib.annotations.Facade;
+import com.crm.sharedlib.dto.request.CreateRoleRequest;
 import com.crm.sharedlib.dto.request.RoleFilterRequest;
 import com.crm.sharedlib.dto.request.RoleRequest;
 import com.crm.sharedlib.dto.response.RoleResponse;
@@ -30,9 +31,9 @@ public class InternalRoleFacade {
 
     @Transactional
     public RoleResponse createRole(
-            RoleRequest request
+            CreateRoleRequest request
     ) {
-        Role role = roleService.createRole(request.getName());
+        Role role = roleService.createRole(request.getName(), request.getIsDeletable());
 
         List<AccessControl> accessControls =
                 accessControlService.createAccessControls(request.getResources(), role);
