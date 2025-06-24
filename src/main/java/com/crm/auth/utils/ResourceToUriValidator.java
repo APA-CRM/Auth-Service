@@ -19,10 +19,14 @@ public class ResourceToUriValidator {
             ALL, List.of(
                     "/api/organizations/*/users/**",
                     "/api/organizations/*/roles/**",
+                    "/api/organizations/*/users/*/roles/**",
+                    "/api/organizations/*/invitations/**",
                     "/api/organizations/**"
             ),
             USERS, Collections.singletonList("/api/organizations/*/users/**"),
             ROLES, Collections.singletonList("/api/organizations/*/roles/**"),
+            USERS_ROLES, Collections.singletonList("/api/organizations/*/users/*/roles/**"),
+            INVITATIONS, Collections.singletonList("/api/organizations/*/invitations/**"),
             ORGANIZATIONS, Collections.singletonList("/api/organizations/**")
     );
 
