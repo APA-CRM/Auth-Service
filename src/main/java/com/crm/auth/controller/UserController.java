@@ -5,6 +5,7 @@ import com.crm.sharedlib.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.crm.sharedlib.consts.CrmConstants.USER_ID_HEADER_NAME;
@@ -21,7 +22,7 @@ public class UserController {
             @RequestHeader(USER_ID_HEADER_NAME)
             Long userId
     ) {
-        return facade.getUser(userId);
+        return facade.getUserById(userId);
     }
 
     @GetMapping
@@ -31,10 +32,10 @@ public class UserController {
         return facade.getUsersByFullName(fullName);
     }
 
-    @GetMapping
-    public List<UserResponse> getUserById(
-            @RequestParam("id") Long id
+    @GetMapping("/{userId}")
+    public UserResponse getUserById(
+            @PathVariable("userId") Long userId
     ) {
-        return facade.getUserById(id);
+        return facade.getUserById(userId);
     }
 }

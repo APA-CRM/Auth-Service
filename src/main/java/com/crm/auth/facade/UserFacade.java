@@ -7,7 +7,6 @@ import com.crm.sharedlib.annotations.Facade;
 import com.crm.sharedlib.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @Facade
@@ -18,7 +17,7 @@ public class UserFacade {
 
     private final UserMapper userMapper;
 
-    public UserResponse getUser(Long userId) {
+    public UserResponse getUserById(Long userId) {
         User user = userService.getUserByIdOrThrowException(userId);
 
         return userMapper.toDto(user);
@@ -26,14 +25,6 @@ public class UserFacade {
 
     public List<UserResponse> getUsersByFullName(String fullName) {
         List<User> users = userService.getUsersByFullNameStartsWith(fullName.trim());
-
-        return users.stream()
-                .map(userMapper::toDto)
-                .toList();
-    }
-
-    public List<UserResponse> getUserById(Long id) {
-        List<User> users = Collections.singletonList(userService.getUserByIdOrThrowException(id));
 
         return users.stream()
                 .map(userMapper::toDto)
