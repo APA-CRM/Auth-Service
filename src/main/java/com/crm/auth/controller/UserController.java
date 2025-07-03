@@ -31,4 +31,10 @@ public class UserController {
         return facade.getUsersByFullName(fullName);
     }
 
+    @GetMapping
+    public List<UserResponse> getUserById(
+            @RequestParam("id") Long id
+    ) {
+        return facade.getUserById(id);
+    }
 }
