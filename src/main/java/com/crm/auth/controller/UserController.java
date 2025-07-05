@@ -1,11 +1,9 @@
 package com.crm.auth.controller;
 
-import com.crm.auth.dto.request.UserRequest;
+import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.facade.UserFacade;
 import com.crm.sharedlib.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,19 +39,13 @@ public class UserController {
         return facade.getUserById(userId);
     }
 
-    @GetMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(
-            @RequestHeader("X-User-Id") Long authUserId,
+    @PatchMapping("/{id}")
+    public UserResponse updateUser(
+            @RequestHeader(USER_ID_HEADER_NAME) Long authUserId,
             @PathVariable("id") Long targetUserId,
-            @RequestBody UserRequest request
+            @RequestBody UserUpdateRequest updates
     ) {
-        if (!authUserId.equals(targetUserId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("You can only update your own profile.");
-        }
-
-        UserResponse updatedUser = facade.updateUser(targetUserId, request);
-        return ResponseEntity.ok(updatedUser);
+        return facade.updateUser(targetUserId, authUserId, updates);
     }
 
 }

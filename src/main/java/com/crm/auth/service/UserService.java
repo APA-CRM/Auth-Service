@@ -2,7 +2,7 @@ package com.crm.auth.service;
 
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
-import com.crm.auth.dto.request.UserRequest;
+import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.UserRepository;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -64,16 +65,16 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long userId, UserRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User updateUserFromRequest(Long userId, Long authUserId, UserUpdateRequest updates) {
+        if (!Objects.equals(userId, authUserId)) {
+            throw new ForbiddenException("You can only update your own profile.");
+        }
+        User user = getUserByIdOrThrowException(userId);
 
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setAboutYourself(request.getAboutYourself());
+        user = userMapper.updateUserFromRequest(updates, user);
 
-        return user;
+        return userRepository.save(user);
     }
+
 
 }

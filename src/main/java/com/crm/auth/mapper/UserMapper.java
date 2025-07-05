@@ -1,6 +1,7 @@
 package com.crm.auth.mapper;
 
 import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.entity.User;
 import com.crm.sharedlib.dto.response.RoleLightResponse;
@@ -9,6 +10,7 @@ import com.crm.sharedlib.dto.response.UserWithRoleResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -36,6 +38,11 @@ public abstract class UserMapper {
     @Mapping(target = "updateAt", ignore = true)
     public abstract User toEntity(SignUpRequest request);
 
+    @Mapping(expression = "java(trimName(request.getFirstName()))", target = "firstName")
+    @Mapping(expression = "java(trimName(request.getLastName()))", target = "lastName")
+    @Mapping(expression = "java(buildFullName(request.getFirstName(),request.getLastName()))", target = "fullName")
+    public abstract User updateUserFromRequest(UserUpdateRequest request,
+                                               @MappingTarget User user);
 
     protected String trimName(String name) {
         if (StringUtils.hasText(name)) {
