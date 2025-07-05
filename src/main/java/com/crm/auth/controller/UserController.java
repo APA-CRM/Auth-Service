@@ -1,5 +1,6 @@
 package com.crm.auth.controller;
 
+import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.facade.UserFacade;
 import com.crm.sharedlib.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class UserController {
             @RequestHeader(USER_ID_HEADER_NAME)
             Long userId
     ) {
-        return facade.getUser(userId);
+        return facade.getUserById(userId);
     }
 
     @GetMapping
@@ -29,6 +30,22 @@ public class UserController {
             @RequestParam("fullName") String fullName
     ) {
         return facade.getUsersByFullName(fullName);
+    }
+
+    @GetMapping("/{userId}")
+    public UserResponse getUserById(
+            @PathVariable("userId") Long userId
+    ) {
+        return facade.getUserById(userId);
+    }
+
+    @PatchMapping("/{id}")
+    public UserResponse updateUser(
+            @RequestHeader(USER_ID_HEADER_NAME) Long authUserId,
+            @PathVariable("id") Long targetUserId,
+            @RequestBody UserUpdateRequest updates
+    ) {
+        return facade.updateUser(targetUserId, authUserId, updates);
     }
 
 }
