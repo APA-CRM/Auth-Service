@@ -2,6 +2,7 @@ package com.crm.auth.service;
 
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.dto.request.UserRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.UserRepository;
@@ -60,6 +61,19 @@ public class UserService {
     public User getUserByIdOrThrowException(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
+    }
+
+    @Transactional
+    public User updateUser(Long userId, UserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setAboutYourself(request.getAboutYourself());
+
+        return user;
     }
 
 }

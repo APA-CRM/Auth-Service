@@ -1,5 +1,6 @@
 package com.crm.auth.facade;
 
+import com.crm.auth.dto.request.UserRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.UserService;
@@ -29,6 +30,12 @@ public class UserFacade {
         return users.stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+
+    public UserResponse updateUser(Long userId, UserRequest request) {
+        User updated = userService.updateUser(userId, request);
+
+        return userMapper.toDto(updated);
     }
 
 }
