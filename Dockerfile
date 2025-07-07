@@ -1,9 +1,19 @@
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jdk-jammy AS builder
 
 WORKDIR /app
 
-ARG JAR_FILE=target/*.jar
+COPY src src
+COPY --chmod=777 mvnw mvnw
+COPY pom.xml pom.xml
+COPY  .mvn .mvn
 
-COPY ${JAR_FILE} app.jar
+RUN --mount=type=cache,target=/root/.m2 ./mvnw clean package
+
+FROM eclipse-temurin:21-jre-jammy AS runner
+
+WORKDIR /app
+
+ARG JAR_FILE_PATH=/app/target/*.jar
+COPY --from=builder ${JAR_FILE_PATH} app.jar
 
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
