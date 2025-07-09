@@ -3,6 +3,7 @@ package com.crm.auth.controller;
 import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.facade.UserFacade;
 import com.crm.sharedlib.dto.response.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class UserController {
     public UserResponse updateUser(
             @RequestHeader(USER_ID_HEADER_NAME) Long authUserId,
             @PathVariable("id") Long targetUserId,
-            @RequestBody UserUpdateRequest updates
+            @Valid @RequestBody UserUpdateRequest updates
     ) {
         return facade.updateUser(targetUserId, authUserId, updates);
     }
