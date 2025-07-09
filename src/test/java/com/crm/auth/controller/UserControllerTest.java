@@ -5,6 +5,8 @@ import com.crm.auth.dto.request.UserUpdateRequest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -166,6 +168,37 @@ class UserControllerTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(HttpStatus.FORBIDDEN.value())
                 .body("message",is("You can only update your own profile."));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'+38067 123456'",        // недостаточно цифр
+            "'+38 0 67 123 4567'",    // неправильный формат
+            "'+123 (4567) 123-456'",  // код оператора слишком длинный
+            "'+12)345( 1234-5678'",   // неправильные скобки
+            "'+1-abc-def-ghij'",      // буквы вместо цифр
+            "'++380671234567'",       // двойной +
+            "'+38067_123_4567'",      // символ _
+            "'+9999 123 456 7890'",   // слишком длинный код страны
+            "'123456'",               // слишком короткий
+            "'380671234567"           // нет +
+    })
+    @DisplayName("Update user by ID with invalid phone number expected bad request")
+    public void updateUserPhoneNumberExpectedBadRequest(String phoneNumber) {
+
+        final int userId = 101;
+
+        UserUpdateRequest request = new UserUpdateRequest();
+        request.setPhoneNumber(phoneNumber);
+        given()
+            .contentType(ContentType.JSON)
+            .header(USER_ID_HEADER_NAME, userId)
+            .body(request)
+            .when()
+            .patch(BASE_URI + "/{userId}", userId)
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
 }
