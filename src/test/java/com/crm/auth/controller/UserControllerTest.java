@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -171,17 +172,17 @@ class UserControllerTest extends BaseIntegrationTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "'+38067 123456'",        // недостаточно цифр
-            "'+38 0 67 123 4567'",    // неправильный формат
-            "'+123 (4567) 123-456'",  // код оператора слишком длинный
-            "'+12)345( 1234-5678'",   // неправильные скобки
-            "'+1-abc-def-ghij'",      // буквы вместо цифр
-            "'++380671234567'",       // двойной +
-            "'+38067_123_4567'",      // символ _
-            "'+9999 123 456 7890'",   // слишком длинный код страны
-            "'123456'",               // слишком короткий
-            "'380671234567"           // нет +
+    @ValueSource(strings = {
+            "'+38067 123456'",        // not enough numbers
+            "'+38 0 67 123 4567'",    // wrong format
+            "'+123 (4567) 123-456'",  // operator code too long
+            "'+12)345( 1234-5678'",   // wrong brackets
+            "'+1-abc-def-ghij'",      // letters instead of numbers
+            "'++380671234567'",       // double +
+            "'+38067_123_4567'",      // symbol _
+            "'+9999 123 456 7890'",   // too long code country
+            "'123456'",               // too short
+            "'380671234567"           // no +
     })
     @DisplayName("Update user by ID with invalid phone number expected bad request")
     public void updateUserPhoneNumberExpectedBadRequest(String phoneNumber) {
