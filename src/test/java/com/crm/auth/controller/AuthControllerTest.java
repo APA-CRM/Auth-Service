@@ -141,7 +141,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                 .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.UNAUTHORIZED.value())
-                .body("message", is("Refresh token is not valid"));
+                .body("message", is("Unauthorized"));
     }
 
     @Test
@@ -160,7 +160,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                 .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.UNAUTHORIZED.value())
-                .body("message", is("Refresh token is expired"));
+                .body("message", is("Unauthorized"));
     }
 
     @Test
@@ -340,7 +340,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Authorize and check access when authorization header is not specified expected bad request")
+        @DisplayName("Authorize and check access when authorization header is not specified expected unauthorized")
         public void authorizeAndCheckAccessWhenAuthorizationHeaderIsNotSpecifiedExpectedBadRequest() {
 
             AuthorizationRequest request = new AuthorizationRequest();
@@ -358,11 +358,11 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .log().all()
                     .assertThat()
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Authorization header is empty"));
+                    .body("message", is("Unauthorized"));
         }
 
         @Test
-        @DisplayName("Authorize and check access when authorization header is not specified expected bad request")
+        @DisplayName("Authorize and check access when authorization header is not specified expected unauthorized")
         public void authorizeAndCheckAccessWhenOrganizationIdHeaderIsNotSpecifiedExpectedBadRequest() {
 
             AuthorizationRequest request = new AuthorizationRequest();
@@ -380,7 +380,7 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .log().all()
                     .assertThat()
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Organization id is not specified"));
+                    .body("message", is("Unauthorized"));
         }
 
         @Test
@@ -406,7 +406,33 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .log().all()
                     .assertThat()
                     .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Jwt token is expired"));
+                    .body("message", is("Unauthorized"));
+        }
+
+        @Test
+        @DisplayName("Authorize and check access when token with wrong JWT signature expected unauthorized")
+        public void authorizeAndCheckAccessWhenTokenWithWrongSignatureExpectedUnauthorized() {
+            final String wrongJwt = "eyJhbGciOiJIUzI1NiJ9." +
+                    "eyJJc3N1ZXIiOiJJc3N1ZXIiLCJpZCI6IjEiLCJsb2dpbiI6InRlc3QiLCJleHAiOjE3NTIzMzE1NDIsImlhdCI6MTc1MjMzMTU0Mn0." +
+                    "n_Lepi7ESJhxl3BdN8RBmI4mBzSWwiCudXDv5RL3FkM";
+
+            AuthorizationRequest request = new AuthorizationRequest();
+
+            request.setUri("/api/organizations/");
+            request.setHttpMethodName("POST");
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + wrongJwt)
+                    .header(ORGANIZATION_ID_HEADER_NAME, 1)
+                    .when()
+                    .body(request)
+                    .post(BASE_URI + "/check-access")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.UNAUTHORIZED.value())
+                    .body("message", is("Unauthorized"));
         }
 
     }
