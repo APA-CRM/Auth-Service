@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
@@ -168,7 +167,7 @@ class UserControllerTest extends BaseIntegrationTest {
                 .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.FORBIDDEN.value())
-                .body("message",is("You can only update your own profile."));
+                .body("message", is("You can only update your own profile."));
     }
 
     @ParameterizedTest
@@ -192,14 +191,14 @@ class UserControllerTest extends BaseIntegrationTest {
         UserUpdateRequest request = new UserUpdateRequest();
         request.setPhoneNumber(phoneNumber);
         given()
-            .contentType(ContentType.JSON)
-            .header(USER_ID_HEADER_NAME, userId)
-            .body(request)
-            .when()
-            .patch(BASE_URI + "/{userId}", userId)
-            .then()
-            .log().all()
-            .statusCode(HttpStatus.BAD_REQUEST.value());
+                .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER_NAME, userId)
+                .body(request)
+                .when()
+                .patch(BASE_URI + "/{userId}", userId)
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
 }

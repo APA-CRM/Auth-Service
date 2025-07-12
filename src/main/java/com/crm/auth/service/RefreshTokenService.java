@@ -51,7 +51,7 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken validateAndRecreateRefreshToken(String refreshTokenString, String deviceInfo) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenString)
-                .orElseThrow(() -> new UnauthorizedException("Refresh token is not valid"));
+                .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
 
         checkIfTokenExpired(refreshToken);
 
@@ -76,7 +76,7 @@ public class RefreshTokenService {
     private void checkIfTokenExpired(RefreshToken refreshToken) {
         if (nonNull(refreshToken) &&
                 refreshToken.getExpiredAt().isBefore(Instant.now())) {
-            throw new UnauthorizedException("Refresh token is expired");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 

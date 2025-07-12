@@ -46,9 +46,11 @@ public class UserService {
 
     public User validateUserForSignInRequest(SignInRequest request) {
         User user = userRepository.findByLogin(request.getLogin())
+                // TODO: UnauthorizedException must be thrown instead of ForbiddenException
                 .orElseThrow(() -> new ForbiddenException("Wrong login or password"));
 
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            // TODO: UnauthorizedException must be thrown instead of ForbiddenException
             throw new ForbiddenException("Wrong login or password");
         }
 

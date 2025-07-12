@@ -29,7 +29,7 @@ public class AuthenticationService {
 
     public String getTokenAndValidate(String authorizationHeader, Long organizationId) {
         if (isNull(organizationId)) {
-            throw new UnauthorizedException("Organization id is not specified");
+            throw new UnauthorizedException("Unauthorized");
         }
 
         return getTokenAndValidate(authorizationHeader);
@@ -37,12 +37,12 @@ public class AuthenticationService {
 
     public String getTokenAndValidate(String authorizationHeader) {
         String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
-                .orElseThrow(() -> new UnauthorizedException("Authorization header is empty"));
+                .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
 
         boolean expired = jwtService.isExpired(token);
 
         if (expired) {
-            throw new UnauthorizedException("Jwt token is expired");
+            throw new UnauthorizedException("Unauthorized");
         }
 
         return token;
