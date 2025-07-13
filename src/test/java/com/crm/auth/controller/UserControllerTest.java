@@ -12,8 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static com.crm.sharedlib.consts.CrmConstants.USER_ID_HEADER_NAME;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @Sql(scripts = "classpath:sql/insertTestUsers.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:sql/deleteTestUsers.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -62,6 +61,24 @@ class UserControllerTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(HttpStatus.NOT_FOUND.value())
                 .body("message", is("User is not found"));
+    }
+
+    @Test
+    @DisplayName("Get users by full name when fullName param is blank expected response with empty array.")
+    public void getUsersByFullNameWhenFullNameIsBlankExpectedSuccess() {
+        final int userId = 101;
+
+        given()
+                .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER_NAME, userId)
+                .param("fullName")
+                .when()
+                .get(BASE_URI)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("", hasSize(0));
     }
 
     @Test
