@@ -26,8 +26,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.crm</groupId>
-            <artifactId>sharedlib</artifactId>
+            <groupId>com.github.APA-CRM</groupId>
+            <artifactId>crm-shared-lib</artifactId>
             <version>0.0.11-SNAPSHOT</version>
         </dependency>
         <dependency>
