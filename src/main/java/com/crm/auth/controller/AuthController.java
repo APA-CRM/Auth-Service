@@ -7,11 +7,11 @@ import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.facade.AuthenticationFacade;
 import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.AuthResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.crm.sharedlib.consts.CrmConstants.ORGANIZATION_ID_HEADER_NAME;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
@@ -67,11 +67,10 @@ public class AuthController {
     public AuthResponse authorizeAndCheckAccess(
             @RequestHeader(value = AUTHORIZATION, required = false)
             String authorizationHeader,
-            @RequestHeader(value = ORGANIZATION_ID_HEADER_NAME, required = false)
-            Long organizationId,
-            @RequestBody AuthorizationRequest request
+            @RequestBody AuthorizationRequest request,
+            HttpServletRequest servletRequest
     ) {
-        return authenticationFacade.authorizeAndCheckAccess(authorizationHeader, organizationId, request);
+        return authenticationFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
     }
 
 }

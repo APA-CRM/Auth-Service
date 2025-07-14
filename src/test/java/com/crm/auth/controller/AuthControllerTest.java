@@ -13,6 +13,7 @@ import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.OrganizationUserRolesResponse;
 import com.crm.sharedlib.enums.Action;
 import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.exception.NotFoundException;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -337,6 +338,35 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .assertThat()
                     .statusCode(HttpStatus.FORBIDDEN.value())
                     .body("message", is("You can't access this resource"));
+        }
+
+        @Test
+        @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
+        public void authorizeAndCheckAccessWhenAccessControlsNotFoundExpectedForbidden() {
+            final String token = jwtService.generateToken(1L, "login");
+
+            AuthorizationRequest request = new AuthorizationRequest();
+
+            request.setUri("/api/organizations/1");
+            request.setHttpMethodName("PUT");
+
+            Mockito.when(userPermissionService.getUserPermission(Mockito.anyLong(), Mockito.anyLong()))
+                    .thenReturn(Optional.empty());
+
+            Mockito.when(mainClient.getOrganizationUserRoles(Mockito.anyLong(), Mockito.anyLong()))
+                    .thenThrow(new NotFoundException("User is not found"));
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .when()
+                    .body(request)
+                    .post(BASE_URI + "/check-access")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.FORBIDDEN.value())
+                    .body("message", is("Access controls not found"));
         }
 
         @Test
