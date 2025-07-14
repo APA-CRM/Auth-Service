@@ -8,6 +8,8 @@ import com.crm.auth.utils.JwtUtils;
 import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.AuthResponse;
 import com.crm.sharedlib.dto.response.OrganizationUserRolesResponse;
+import com.crm.sharedlib.exception.ForbiddenException;
+import com.crm.sharedlib.exception.NotFoundException;
 import com.crm.sharedlib.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +74,14 @@ public class AuthenticationService {
                 organizationId, userId
         );
 
-        OrganizationUserRolesResponse organizationUserRoles =
-                mainClient.getOrganizationUserRoles(organizationId, userId);
+        OrganizationUserRolesResponse organizationUserRoles;
+
+        try {
+            organizationUserRoles =
+                    mainClient.getOrganizationUserRoles(organizationId, userId);
+        } catch (NotFoundException e) {
+            throw new ForbiddenException("Access controls not found");
+        }
 
         return userPermissionSaver.saveUserPermission(
                 organizationId, userId, organizationUserRoles.getRolesId()

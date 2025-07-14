@@ -15,6 +15,8 @@ import com.crm.auth.service.operation.UserCreatorService;
 import com.crm.sharedlib.annotations.Facade;
 import com.crm.sharedlib.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.dto.response.AuthResponse;
+import com.crm.sharedlib.utils.OrganizationIdExtractor;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Facade
@@ -72,9 +74,12 @@ public class AuthenticationFacade {
     }
 
     public AuthResponse authorizeAndCheckAccess(
-            String authorizationHeader, Long organizationId,
+            String authorizationHeader, HttpServletRequest servletRequest,
             AuthorizationRequest request
     ) {
+        Long organizationId = OrganizationIdExtractor
+                .extractOrganizationIdFromRequest(servletRequest, request.getUri());
+
         String token = authenticationService.getTokenAndValidate(authorizationHeader, organizationId);
 
         return authenticationService.authorizeAndCheckAccess(token, organizationId, request);
