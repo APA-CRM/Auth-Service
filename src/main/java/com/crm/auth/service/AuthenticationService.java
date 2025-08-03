@@ -69,7 +69,7 @@ public class AuthenticationService {
         return payload;
     }
 
-    public UserPermission fetchUserPermissionFromMainServiceAndSave(Long organizationId, Long userId) {
+    private UserPermission fetchUserPermissionFromMainServiceAndSave(Long organizationId, Long userId) {
         log.debug("User permission not found in cache: Organization = {}, User = {}",
                 organizationId, userId
         );

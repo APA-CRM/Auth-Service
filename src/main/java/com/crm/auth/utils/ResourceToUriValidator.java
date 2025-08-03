@@ -27,6 +27,7 @@ public class ResourceToUriValidator {
             ROLES, Collections.singletonList("/api/organizations/*/roles/**"),
             USERS_ROLES, Collections.singletonList("/api/organizations/*/users/*/roles/**"),
             INVITATIONS, Collections.singletonList("/api/organizations/*/invitations/**"),
+            FILES, List.of("/api/organizations/*/files/**", "/api/files/**"),
             ORGANIZATIONS, Collections.singletonList("/api/organizations/**")
     );
 
