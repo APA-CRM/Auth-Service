@@ -21,6 +21,7 @@ public class ResourceToUriValidator {
                     "/api/organizations/*/roles/**",
                     "/api/organizations/*/users/*/roles/**",
                     "/api/organizations/*/invitations/**",
+                    "/api/organizations/*/files/**", "/api/files/**",
                     "/api/organizations/**"
             ),
             USERS, Collections.singletonList("/api/organizations/*/users/**"),
