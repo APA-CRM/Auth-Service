@@ -14,6 +14,8 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Collections;
 
+import static com.crm.sharedlib.consts.CrmConstants.ORGANIZATION_USER_ROLES_SYNC_QUEUE;
+
 @Sql(scripts = "classpath:sql/insertTestRoles.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:sql/deleteTestRoles.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UpdateOrganizationUserPermissionTest extends BaseIntegrationTestWithRabbitMQ {
@@ -34,7 +36,7 @@ class UpdateOrganizationUserPermissionTest extends BaseIntegrationTestWithRabbit
                 .organizationId(1L)
                 .build();
 
-        rabbitTemplate.convertAndSend("users.events", "users.roles-changed", message);
+        rabbitTemplate.convertAndSend(ORGANIZATION_USER_ROLES_SYNC_QUEUE, message);
 
         // Wait, because test is async
         Thread.sleep(2000);
