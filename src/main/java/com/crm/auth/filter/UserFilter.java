@@ -2,14 +2,14 @@ package com.crm.auth.filter;
 
 import com.crm.auth.filter.criteria.user.UserPredicateBuilder;
 import com.crm.auth.persistance.entity.User;
-import com.crm.sharedlib.filter.criteria.BaseCriteriaFilter;
-import com.crm.sharedlib.filter.criteria.impl.DefaultCountableFilter;
-import com.crm.sharedlib.filter.criteria.impl.DefaultOrderByApplier;
-import com.crm.sharedlib.filter.criteria.impl.DefaultPageableFilter;
-import com.crm.sharedlib.filter.criteria.interfaces.CountableFilter;
-import com.crm.sharedlib.filter.criteria.interfaces.OrderByApplier;
-import com.crm.sharedlib.filter.criteria.interfaces.PageableBuilder;
-import com.crm.sharedlib.filter.criteria.interfaces.PredicateBuilder;
+import com.crm.sharedlib.core.filter.criteria.BaseCriteriaFilter;
+import com.crm.sharedlib.core.filter.criteria.impl.DefaultCountableFilter;
+import com.crm.sharedlib.core.filter.criteria.impl.DefaultOrderByApplier;
+import com.crm.sharedlib.core.filter.criteria.impl.DefaultPageableFilter;
+import com.crm.sharedlib.core.filter.criteria.interfaces.CountableFilter;
+import com.crm.sharedlib.core.filter.criteria.interfaces.OrderByApplier;
+import com.crm.sharedlib.core.filter.criteria.interfaces.PageableBuilder;
+import com.crm.sharedlib.core.filter.criteria.interfaces.PredicateBuilder;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,13 +1,13 @@
 package com.crm.auth.service.consumer;
 
 import com.crm.auth.service.operation.UserPermissionSaver;
-import com.crm.sharedlib.dto.amqp.OrgUserRoleChangedEvent;
+import com.crm.sharedlib.core.dto.amqp.OrgUserRoleChangedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import static com.crm.sharedlib.consts.CrmConstants.ORGANIZATION_USER_ROLES_SYNC_QUEUE;
+import static com.crm.sharedlib.messaging.constants.RabbitMQConstants.ORGANIZATION_USER_ROLES_SYNC_QUEUE;
 
 @Service
 @RequiredArgsConstructor

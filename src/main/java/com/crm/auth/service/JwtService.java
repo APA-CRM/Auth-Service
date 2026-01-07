@@ -1,7 +1,7 @@
 package com.crm.auth.service;
 
-import com.crm.sharedlib.dto.response.AuthResponse;
-import com.crm.sharedlib.exception.UnauthorizedException;
+import com.crm.sharedlib.core.dto.response.AuthResponse;
+import com.crm.sharedlib.core.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

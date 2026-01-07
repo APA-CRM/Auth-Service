@@ -2,11 +2,11 @@ package com.crm.auth.mapper;
 
 import com.crm.auth.persistance.entity.AccessControl;
 import com.crm.auth.persistance.entity.Role;
-import com.crm.sharedlib.dto.response.AccessControlResponse;
-import com.crm.sharedlib.dto.response.RoleLightResponse;
-import com.crm.sharedlib.dto.response.RoleResponse;
-import com.crm.sharedlib.enums.Action;
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.dto.response.AccessControlResponse;
+import com.crm.sharedlib.core.dto.response.RoleLightResponse;
+import com.crm.sharedlib.core.dto.response.RoleResponse;
+import com.crm.sharedlib.core.enums.Action;
+import com.crm.sharedlib.core.enums.Resource;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

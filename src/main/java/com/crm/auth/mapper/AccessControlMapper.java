@@ -3,13 +3,13 @@ package com.crm.auth.mapper;
 import com.crm.auth.persistance.entity.AccessControl;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.entity.redis.ResourcePermission;
-import com.crm.sharedlib.enums.Action;
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.enums.Action;
+import com.crm.sharedlib.core.enums.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.crm.sharedlib.enums.Action.*;
+import static com.crm.sharedlib.core.enums.Action.*;
 
 @Component
 public class AccessControlMapper {

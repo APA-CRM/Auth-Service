@@ -4,8 +4,8 @@ import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.UserService;
-import com.crm.sharedlib.annotations.Facade;
-import com.crm.sharedlib.dto.response.UserResponse;
+import com.crm.sharedlib.core.annotations.Facade;
+import com.crm.sharedlib.core.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

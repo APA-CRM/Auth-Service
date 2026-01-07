@@ -1,6 +1,6 @@
 package com.crm.auth.utils;
 
-import com.crm.sharedlib.enums.Action;
+import com.crm.sharedlib.core.enums.Action;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpMethod;
 
@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.crm.sharedlib.enums.Action.*;
+import static com.crm.sharedlib.core.enums.Action.*;
 import static org.springframework.http.HttpMethod.*;
 
 @UtilityClass

@@ -2,14 +2,14 @@ package com.crm.auth.controller;
 
 import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.facade.UserFacade;
-import com.crm.sharedlib.dto.response.UserResponse;
+import com.crm.sharedlib.core.dto.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.crm.sharedlib.consts.CrmConstants.USER_ID_HEADER_NAME;
+import static com.crm.sharedlib.core.consts.CrmHeaders.USER_ID_HEADER_NAME;
 
 @RestController
 @RequestMapping("/api/users")

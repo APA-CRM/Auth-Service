@@ -1,10 +1,10 @@
 package com.crm.auth.controller.internal;
 
 import com.crm.auth.BaseIntegrationTest;
-import com.crm.sharedlib.dto.DateRange;
-import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
-import com.crm.sharedlib.dto.response.UserAndRoles;
-import com.crm.sharedlib.enums.SortDirections;
+import com.crm.sharedlib.core.dto.DateRange;
+import com.crm.sharedlib.core.dto.request.UserWithRolesFilterRequest;
+import com.crm.sharedlib.core.dto.response.UserAndRoles;
+import com.crm.sharedlib.core.enums.SortDirections;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 
-import static com.crm.sharedlib.consts.CrmConstants.USER_ID_HEADER_NAME;
+import static com.crm.sharedlib.core.consts.CrmHeaders.USER_ID_HEADER_NAME;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 

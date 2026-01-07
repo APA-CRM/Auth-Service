@@ -1,11 +1,11 @@
 package com.crm.auth.filter.criteria.user;
 
 import com.crm.auth.persistance.entity.User;
-import com.crm.sharedlib.dto.request.BaseFilterRequest;
-import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
-import com.crm.sharedlib.dto.response.UserAndRoles;
-import com.crm.sharedlib.filter.criteria.interfaces.PredicateBuilder;
-import com.crm.sharedlib.utils.PredicateFilterUtils;
+import com.crm.sharedlib.core.dto.request.BaseFilterRequest;
+import com.crm.sharedlib.core.dto.request.UserWithRolesFilterRequest;
+import com.crm.sharedlib.core.dto.response.UserAndRoles;
+import com.crm.sharedlib.core.filter.criteria.interfaces.PredicateBuilder;
+import com.crm.sharedlib.core.utils.PredicateFilterUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;

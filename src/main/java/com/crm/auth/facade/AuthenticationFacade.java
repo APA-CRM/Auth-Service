@@ -12,10 +12,10 @@ import com.crm.auth.service.JwtService;
 import com.crm.auth.service.RefreshTokenService;
 import com.crm.auth.service.UserService;
 import com.crm.auth.service.operation.UserCreatorService;
-import com.crm.sharedlib.annotations.Facade;
-import com.crm.sharedlib.dto.request.AuthorizationRequest;
-import com.crm.sharedlib.dto.response.AuthResponse;
-import com.crm.sharedlib.utils.OrganizationIdExtractor;
+import com.crm.sharedlib.core.annotations.Facade;
+import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.response.AuthResponse;
+import com.crm.sharedlib.core.utils.OrganizationIdExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 

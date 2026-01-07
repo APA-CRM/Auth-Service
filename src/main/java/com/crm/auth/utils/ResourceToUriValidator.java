@@ -1,6 +1,6 @@
 package com.crm.auth.utils;
 
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.enums.Resource;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.AntPathMatcher;
 
@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.crm.sharedlib.enums.Resource.*;
+import static com.crm.sharedlib.core.enums.Resource.*;
 
 @UtilityClass
 public class ResourceToUriValidator {

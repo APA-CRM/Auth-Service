@@ -1,6 +1,6 @@
 package com.crm.auth.service.producer;
 
-import com.crm.sharedlib.dto.amqp.SendPasswordByEmailEvent;
+import com.crm.sharedlib.core.dto.amqp.SendPasswordByEmailEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

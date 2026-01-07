@@ -3,9 +3,9 @@ package com.crm.auth.service;
 import com.crm.auth.persistance.entity.AccessControl;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.repository.AccessControlRepository;
-import com.crm.sharedlib.dto.request.ResourceWithActionsRequest;
-import com.crm.sharedlib.enums.Action;
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.dto.request.ResourceWithActionsRequest;
+import com.crm.sharedlib.core.enums.Action;
+import com.crm.sharedlib.core.enums.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.crm.sharedlib.enums.Action.*;
+import static com.crm.sharedlib.core.enums.Action.*;
 
 @Service
 @RequiredArgsConstructor

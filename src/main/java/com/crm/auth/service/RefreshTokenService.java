@@ -4,7 +4,7 @@ import com.crm.auth.persistance.entity.RefreshToken;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.RefreshTokenRepository;
 import com.crm.auth.utils.SecureStringGenerator;
-import com.crm.sharedlib.exception.UnauthorizedException;
+import com.crm.sharedlib.core.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -2,12 +2,12 @@ package com.crm.auth.controller.internal;
 
 
 import com.crm.auth.BaseIntegrationTest;
-import com.crm.sharedlib.dto.request.CreateRoleRequest;
-import com.crm.sharedlib.dto.request.ResourceWithActionsRequest;
-import com.crm.sharedlib.dto.request.RoleFilterRequest;
-import com.crm.sharedlib.dto.request.RoleRequest;
-import com.crm.sharedlib.enums.Action;
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.dto.request.CreateRoleRequest;
+import com.crm.sharedlib.core.dto.request.ResourceWithActionsRequest;
+import com.crm.sharedlib.core.dto.request.RoleFilterRequest;
+import com.crm.sharedlib.core.dto.request.RoleRequest;
+import com.crm.sharedlib.core.enums.Action;
+import com.crm.sharedlib.core.enums.Resource;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

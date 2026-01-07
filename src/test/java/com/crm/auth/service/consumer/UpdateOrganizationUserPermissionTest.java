@@ -2,7 +2,7 @@ package com.crm.auth.service.consumer;
 
 import com.crm.auth.BaseIntegrationTestWithRabbitMQ;
 import com.crm.auth.persistance.repository.UserPermissionRepository;
-import com.crm.sharedlib.dto.amqp.OrgUserRoleChangedEvent;
+import com.crm.sharedlib.core.dto.amqp.OrgUserRoleChangedEvent;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Collections;
 
-import static com.crm.sharedlib.consts.CrmConstants.ORGANIZATION_USER_ROLES_SYNC_QUEUE;
+import static com.crm.sharedlib.messaging.constants.RabbitMQConstants.ORGANIZATION_USER_ROLES_SYNC_QUEUE;
 
 @Sql(scripts = "classpath:sql/insertTestRoles.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:sql/deleteTestRoles.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)

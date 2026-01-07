@@ -1,9 +1,9 @@
 package com.crm.auth.controller.internal;
 
 import com.crm.auth.facade.internal.InternalUsersFacade;
-import com.crm.sharedlib.dto.request.UserWithRolesFilterRequest;
-import com.crm.sharedlib.dto.response.UserResponse;
-import com.crm.sharedlib.dto.response.UserWithRoleResponse;
+import com.crm.sharedlib.core.dto.request.UserWithRolesFilterRequest;
+import com.crm.sharedlib.core.dto.response.UserResponse;
+import com.crm.sharedlib.core.dto.response.UserWithRoleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;

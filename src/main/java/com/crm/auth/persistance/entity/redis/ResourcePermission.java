@@ -1,7 +1,7 @@
 package com.crm.auth.persistance.entity.redis;
 
-import com.crm.sharedlib.enums.Action;
-import com.crm.sharedlib.enums.Resource;
+import com.crm.sharedlib.core.enums.Action;
+import com.crm.sharedlib.core.enums.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
