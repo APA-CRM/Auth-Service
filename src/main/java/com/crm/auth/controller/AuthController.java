@@ -55,6 +55,7 @@ public class AuthController {
         return authenticationFacade.refreshJwtToken(request, deviceInfo);
     }
 
+    // TODO: Move to the Internal API
     @GetMapping("authorize")
     public AuthResponse authorize(
             @RequestHeader(value = AUTHORIZATION, required = false)
@@ -63,6 +64,7 @@ public class AuthController {
         return authenticationFacade.authorize(authorizationHeader);
     }
 
+    // TODO: Move to the Internal API
     @PostMapping("/check-access")
     public AuthResponse authorizeAndCheckAccess(
             @RequestHeader(value = AUTHORIZATION, required = false)
