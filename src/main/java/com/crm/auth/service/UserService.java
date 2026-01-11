@@ -71,6 +71,11 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User is not found"));
     }
 
+    public User getUserByEmailOrThrowException(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User is not found by email"));
+    }
+
     @Transactional
     public User updateUserFromRequest(Long userId, Long authUserId, UserUpdateRequest updates) {
         if (!Objects.equals(userId, authUserId)) {

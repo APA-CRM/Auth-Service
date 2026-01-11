@@ -1,0 +1,62 @@
+package com.crm.auth.service;
+
+import com.crm.auth.persistance.entity.PasswordRestoreRequest;
+import com.crm.auth.persistance.entity.User;
+import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
+import com.crm.sharedlib.core.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class PasswordRestoreRequestService {
+
+    private final PasswordRestoreRequestRepository repository;
+
+    public PasswordRestoreRequest getByIdOrThrowException(UUID requestId) {
+        return repository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Password restore request is not found"));
+    }
+
+    @Transactional
+    public PasswordRestoreRequest createPasswordRestoreRequest(User user) {
+        PasswordRestoreRequest restoreRequest = new PasswordRestoreRequest();
+
+        restoreRequest.setUser(user);
+        restoreRequest.setVerificationCode(generateRandomVerificationCode());
+
+        return repository.save(restoreRequest);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean checkVerificationCodeForRestoreRequest(
+            PasswordRestoreRequest restoreRequest, Integer verificationCode
+    ) {
+        boolean verificationCodeIsCorrect = restoreRequest.getVerificationCode().equals(verificationCode);
+
+        if (!verificationCodeIsCorrect) {
+            restoreRequest.incrementAttemptsCount();
+
+            repository.save(restoreRequest);
+        }
+
+        return verificationCodeIsCorrect;
+    }
+
+    @Transactional
+    public void deletePasswordRestoreRequest(PasswordRestoreRequest restoreRequest) {
+        repository.delete(restoreRequest);
+    }
+
+    private Integer generateRandomVerificationCode() {
+        Random random = new Random();
+
+        return random.nextInt(1000, 9999);
+    }
+
+}
