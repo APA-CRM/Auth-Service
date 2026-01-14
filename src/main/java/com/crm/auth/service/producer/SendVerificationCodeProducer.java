@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.crm.sharedlib.messaging.constants.RabbitMQConstants.SEND_VERIFICATION_CODE_QUEUE;
+import static com.crm.auth.constants.RabbitMQConstants.AUTH_TOPIC_EXCHANGE_NAME;
+import static com.crm.auth.constants.RabbitMQConstants.USER_RESTORE_PASSWORD_ROUTING_KEY;
+
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ public class SendVerificationCodeProducer {
         SendVerificationCodeByEmailMessage message =
                 new SendVerificationCodeByEmailMessage(email, verificationCode.toString());
 
-        rabbitTemplate.convertAndSend(SEND_VERIFICATION_CODE_QUEUE, message);
+        rabbitTemplate.convertAndSend(AUTH_TOPIC_EXCHANGE_NAME, USER_RESTORE_PASSWORD_ROUTING_KEY, message);
     }
 
 }
