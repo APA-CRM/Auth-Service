@@ -4,8 +4,10 @@ import com.crm.auth.persistance.entity.PasswordRestoreRequest;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
 import com.crm.auth.utils.VerificationCodeGenerator;
+import com.crm.sharedlib.core.exception.ForbiddenException;
 import com.crm.sharedlib.core.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.util.UUID;
 public class PasswordRestoreRequestService {
 
     private final PasswordRestoreRequestRepository repository;
+    @Value("${app.max-restore-password-attempts}")
+    private Integer maxAttemptsCount;
 
     public PasswordRestoreRequest getByIdOrThrowException(UUID requestId) {
         return repository.findById(requestId)
@@ -39,6 +43,10 @@ public class PasswordRestoreRequestService {
     public boolean checkVerificationCodeForRestoreRequest(
             PasswordRestoreRequest restoreRequest, Integer verificationCode
     ) {
+        if (restoreRequest.getAttemptsCount() > maxAttemptsCount) {
+            throw new ForbiddenException("Max attempts count excided");
+        }
+
         boolean verificationCodeIsCorrect = restoreRequest.getVerificationCode().equals(verificationCode);
 
         if (!verificationCodeIsCorrect) {

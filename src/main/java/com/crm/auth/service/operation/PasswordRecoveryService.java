@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RestoreUserPasswordService {
+public class PasswordRecoveryService {
 
     private final PasswordRestoreRequestService passwordRestoreRequestService;
     private final UserService userService;
@@ -37,7 +37,7 @@ public class RestoreUserPasswordService {
     }
 
     @Transactional
-    public void checkVerificationCode(UUID requestId, VerificationCodeRequest request) {
+    public User checkVerificationCodeAndGetUser(UUID requestId, VerificationCodeRequest request) {
         PasswordRestoreRequest restoreRequest =
                 passwordRestoreRequestService.getByIdOrThrowException(requestId);
 
@@ -50,6 +50,8 @@ public class RestoreUserPasswordService {
         }
 
         passwordRestoreRequestService.deletePasswordRestoreRequest(restoreRequest);
+
+        return restoreRequest.getUser();
     }
 
 }

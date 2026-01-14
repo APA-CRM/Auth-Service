@@ -1,9 +1,8 @@
 package com.crm.auth.controller;
 
-import com.crm.auth.dto.request.RefreshJwtTokenRequest;
-import com.crm.auth.dto.request.SignInRequest;
-import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.dto.request.*;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
+import com.crm.auth.dto.response.RestorePasswordResponse;
 import com.crm.auth.facade.AuthFacade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
@@ -11,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
@@ -53,6 +54,27 @@ public class AuthController {
             String deviceInfo
     ) {
         return authFacade.refreshJwtToken(request, deviceInfo);
+    }
+
+    @PostMapping("/restore-password-request")
+    public RestorePasswordResponse createRequestToRestorePassword(
+            @Valid
+            @RequestBody
+            RestorePasswordRequest request
+    ) {
+        return authFacade.createRequestToRestorePassword(request);
+    }
+
+    @PutMapping("/restore-password-request/{requestId}/restore-password")
+    public JwtAuthenticationResponse restorePasswordByVerificationCode(
+            @PathVariable("requestId")
+            UUID requestId,
+            @Valid @RequestBody
+            VerificationCodeRequest request,
+            @RequestHeader(USER_AGENT)
+            String deviceInfo
+    ) {
+        return authFacade.restorePasswordByVerificationCode(requestId, request, deviceInfo);
     }
 
     // TODO: Move to the Internal API

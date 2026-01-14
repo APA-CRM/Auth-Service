@@ -19,15 +19,19 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String deviceInfo) {
-
-        User user = userService.validateUserForSignInRequest(signInRequest);
-
+    public JwtAuthenticationResponse authenticateUser(User user, String deviceInfo) {
         RefreshToken refreshToken = refreshTokenService.getRefreshTokenBySignInRequest(user, deviceInfo);
 
         String token = jwtService.generateToken(user.getId(), user.getLogin());
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
+    }
+
+    public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String deviceInfo) {
+
+        User user = userService.validateUserForSignInRequest(signInRequest);
+
+        return authenticateUser(user, deviceInfo);
     }
 
     public JwtAuthenticationResponse signUp(SignUpRequest request, String deviceInfo) {
