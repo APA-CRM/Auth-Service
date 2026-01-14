@@ -3,13 +3,13 @@ package com.crm.auth.service;
 import com.crm.auth.persistance.entity.PasswordRestoreRequest;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
+import com.crm.auth.utils.VerificationCodeGenerator;
 import com.crm.sharedlib.core.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -28,7 +28,9 @@ public class PasswordRestoreRequestService {
         PasswordRestoreRequest restoreRequest = new PasswordRestoreRequest();
 
         restoreRequest.setUser(user);
-        restoreRequest.setVerificationCode(generateRandomVerificationCode());
+        restoreRequest.setVerificationCode(
+                VerificationCodeGenerator.generateRandom4DigitVerificationCode()
+        );
 
         return repository.save(restoreRequest);
     }
@@ -53,10 +55,5 @@ public class PasswordRestoreRequestService {
         repository.delete(restoreRequest);
     }
 
-    private Integer generateRandomVerificationCode() {
-        Random random = new Random();
-
-        return random.nextInt(1000, 9999);
-    }
 
 }

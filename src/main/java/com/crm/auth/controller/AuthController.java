@@ -4,7 +4,7 @@ import com.crm.auth.dto.request.RefreshJwtTokenRequest;
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
-import com.crm.auth.facade.AuthenticationFacade;
+import com.crm.auth.facade.AuthFacade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import static org.springframework.http.HttpHeaders.USER_AGENT;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationFacade authenticationFacade;
+    private final AuthFacade authFacade;
 
     @PostMapping("/sign-in")
     public JwtAuthenticationResponse signIn(
@@ -30,7 +30,7 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.signIn(request, deviceInfo);
+        return authFacade.signIn(request, deviceInfo);
     }
 
     @PostMapping("/sign-up")
@@ -41,7 +41,7 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.signUp(request, deviceInfo);
+        return authFacade.signUp(request, deviceInfo);
     }
 
     @PostMapping("/refresh")
@@ -52,7 +52,7 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.refreshJwtToken(request, deviceInfo);
+        return authFacade.refreshJwtToken(request, deviceInfo);
     }
 
     // TODO: Move to the Internal API
@@ -61,7 +61,7 @@ public class AuthController {
             @RequestHeader(value = AUTHORIZATION, required = false)
             String authorizationHeader
     ) {
-        return authenticationFacade.authorize(authorizationHeader);
+        return authFacade.authorize(authorizationHeader);
     }
 
     // TODO: Move to the Internal API
@@ -72,7 +72,7 @@ public class AuthController {
             @RequestBody AuthorizationRequest request,
             HttpServletRequest servletRequest
     ) {
-        return authenticationFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
+        return authFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
     }
 
 }

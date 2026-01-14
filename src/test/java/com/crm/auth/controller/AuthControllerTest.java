@@ -169,7 +169,7 @@ class AuthControllerTest extends BaseIntegrationTest {
     public void signUpExpectedSuccess() {
         SignUpRequest request = new SignUpRequest();
 
-        request.setEmail("test@gmail.com");
+        request.setEmail("newUser@gmail.com");
         request.setLogin("login");
         request.setFirstName("Jack");
         request.setLastName("Pork");

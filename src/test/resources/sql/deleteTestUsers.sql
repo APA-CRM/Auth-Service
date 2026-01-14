@@ -1,2 +1,3 @@
-DELETE FROM user_
+DELETE
+FROM user_
 WHERE 1 = 1;

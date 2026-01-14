@@ -1,5 +1,7 @@
-DELETE FROM access_control
+DELETE
+FROM access_control
 WHERE 1 = 1;
 
-DELETE FROM role
+DELETE
+FROM role
 WHERE 1 = 1;
