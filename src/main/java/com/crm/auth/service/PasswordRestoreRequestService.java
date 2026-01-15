@@ -4,6 +4,7 @@ import com.crm.auth.persistance.entity.PasswordRestoreRequest;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
 import com.crm.auth.utils.VerificationCodeGenerator;
+import com.crm.sharedlib.core.exception.ConflictException;
 import com.crm.sharedlib.core.exception.ForbiddenException;
 import com.crm.sharedlib.core.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class PasswordRestoreRequestService {
 
     private final PasswordRestoreRequestRepository repository;
+
     @Value("${app.max-restore-password-attempts}")
     private Integer maxAttemptsCount;
 
@@ -29,6 +31,10 @@ public class PasswordRestoreRequestService {
 
     @Transactional
     public PasswordRestoreRequest createPasswordRestoreRequest(User user) {
+        if (repository.existsByUser(user)) {
+            throw new ConflictException("Password restore request already exists for this user");
+        }
+
         PasswordRestoreRequest restoreRequest = new PasswordRestoreRequest();
 
         restoreRequest.setUser(user);
@@ -41,9 +47,9 @@ public class PasswordRestoreRequestService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean checkVerificationCodeForRestoreRequest(
-            PasswordRestoreRequest restoreRequest, Integer verificationCode
+            PasswordRestoreRequest restoreRequest, String verificationCode
     ) {
-        if (restoreRequest.getAttemptsCount() > maxAttemptsCount) {
+        if (restoreRequest.getAttemptsCount() >= maxAttemptsCount) {
             throw new ForbiddenException("Max attempts count excided");
         }
 

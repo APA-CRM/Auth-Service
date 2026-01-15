@@ -21,7 +21,7 @@ public class PasswordRestoreRequest {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private Integer verificationCode;
+    private String verificationCode;
 
     @OneToOne(optional = false)
     private User user;
@@ -30,7 +30,7 @@ public class PasswordRestoreRequest {
     private Integer attemptsCount = 0;
 
     @CreatedDate
-    private Instant createdAt;
+    private Instant createAt;
 
     @LastModifiedDate
     private Instant updateAt;

@@ -13,6 +13,6 @@ import lombok.Setter;
 public class VerificationCodeRequest {
 
     @NotNull(message = "Verification code must present")
-    private Integer verificationCode;
+    private String verificationCode;
 
 }

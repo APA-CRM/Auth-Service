@@ -7,10 +7,12 @@ import java.util.Random;
 @UtilityClass
 public class VerificationCodeGenerator {
 
-    public static Integer generateRandom4DigitVerificationCode() {
+    public static String generateRandom4DigitVerificationCode() {
         Random random = new Random();
 
-        return random.nextInt(1000, 9999);
+        int randomInt = random.nextInt(0, 9999);
+
+        return String.format("%04d", randomInt);
     }
 
 }

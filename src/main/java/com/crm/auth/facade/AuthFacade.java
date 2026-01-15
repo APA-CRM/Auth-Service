@@ -3,7 +3,7 @@ package com.crm.auth.facade;
 import com.crm.auth.dto.request.*;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.dto.response.RestorePasswordResponse;
-import com.crm.auth.mapper.RestorePasswordRequestMapper;
+import com.crm.auth.mapper.PasswordRestoreRequestMapper;
 import com.crm.auth.persistance.entity.PasswordRestoreRequest;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.AuthenticationService;
@@ -29,7 +29,7 @@ public class AuthFacade {
 
     private final PasswordRecoveryService passwordRecoveryService;
 
-    private final RestorePasswordRequestMapper passwordRequestMapper;
+    private final PasswordRestoreRequestMapper passwordRequestMapper;
 
     public JwtAuthenticationResponse signIn(SignInRequest request, String deviceInfo) {
         return authenticationService.signIn(request, deviceInfo);

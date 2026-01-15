@@ -15,9 +15,9 @@ public class SendVerificationCodeProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void sendVerificationCode(String email, Integer verificationCode) {
+    public void sendVerificationCode(String email, String verificationCode) {
         SendVerificationCodeByEmailMessage message =
-                new SendVerificationCodeByEmailMessage(email, verificationCode.toString());
+                new SendVerificationCodeByEmailMessage(email, verificationCode);
 
         rabbitTemplate.convertAndSend(AUTH_TOPIC_EXCHANGE_NAME, USER_RESTORE_PASSWORD_ROUTING_KEY, message);
     }
