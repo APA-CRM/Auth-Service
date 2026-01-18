@@ -1,5 +1,6 @@
 package com.crm.auth.controller;
 
+import com.crm.auth.dto.request.UpdateUserPasswordRequest;
 import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.facade.UserFacade;
 import com.crm.sharedlib.core.dto.response.UserResponse;
@@ -47,6 +48,15 @@ public class UserController {
             @Valid @RequestBody UserUpdateRequest updates
     ) {
         return facade.updateUser(targetUserId, authUserId, updates);
+    }
+
+    @PatchMapping("/{id}/update-password")
+    public UserResponse updateUserPassword(
+            @RequestHeader(USER_ID_HEADER_NAME) Long authUserId,
+            @PathVariable("id") Long targetUserId,
+            @Valid @RequestBody UpdateUserPasswordRequest updates
+    ) {
+        return facade.updateUserPassword(targetUserId, authUserId, updates);
     }
 
 }

@@ -1,1 +1,2 @@
-DELETE FROM password_restore_request;
+DELETE
+FROM password_restore_request;

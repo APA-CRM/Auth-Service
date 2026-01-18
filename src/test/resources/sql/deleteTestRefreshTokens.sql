@@ -1,1 +1,2 @@
-DELETE FROM refresh_token;
+DELETE
+FROM refresh_token;

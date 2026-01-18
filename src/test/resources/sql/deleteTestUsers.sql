@@ -1,1 +1,2 @@
-DELETE FROM user_;
+DELETE
+FROM user_;

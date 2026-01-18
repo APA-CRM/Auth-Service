@@ -1,5 +1,6 @@
 package com.crm.auth.facade;
 
+import com.crm.auth.dto.request.UpdateUserPasswordRequest;
 import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
@@ -35,6 +36,13 @@ public class UserFacade {
     public UserResponse updateUser(Long userId, Long authUserId, UserUpdateRequest request) {
 
         User updated = userService.updateUserFromRequest(userId, authUserId, request);
+
+        return userMapper.toDto(updated);
+    }
+
+    public UserResponse updateUserPassword(Long userId, Long authUserId, UpdateUserPasswordRequest request) {
+
+        User updated = userService.updateUserPassword(userId, authUserId, request);
 
         return userMapper.toDto(updated);
     }

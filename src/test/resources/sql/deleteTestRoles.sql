@@ -1,3 +1,5 @@
-DELETE FROM access_control;
+DELETE
+FROM access_control;
 
-DELETE FROM role;
+DELETE
+FROM role;
