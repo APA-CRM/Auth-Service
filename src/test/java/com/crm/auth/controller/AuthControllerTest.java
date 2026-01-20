@@ -486,6 +486,17 @@ class AuthControllerTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Create password restore request expected success response")
+        @Sql(scripts = {
+                "classpath:sql/insertTestUsers.sql",
+                "classpath:sql/insertTestRoles.sql",
+                "classpath:sql/insertTestRefreshTokens.sql"
+        }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(scripts = {
+                "classpath:sql/deleteTestPasswordRestoreRequest.sql",
+                "classpath:sql/deleteTestRefreshTokens.sql",
+                "classpath:sql/deleteTestRoles.sql",
+                "classpath:sql/deleteTestUsers.sql"
+        }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
         public void createPasswordRestoreRequestExceptedSuccess() {
             RestorePasswordRequest request = new RestorePasswordRequest();
 
@@ -496,6 +507,25 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .contentType(ContentType.JSON)
                     .when()
                     .post(BASE_URI + "/restore-password-request")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("id", notNullValue())
+                    .body("attemptsCount", is(0))
+                    .body("createAt", notNullValue())
+                    .body("updateAt", notNullValue());
+        }
+
+        @Test
+        @DisplayName("Resend verification code expected success response")
+        public void resendVerificationCodeExceptedSuccess() {
+            UUID requestId = UUID.fromString("1988e512-72e4-4982-a554-fb890f863618");
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .patch(BASE_URI + "/restore-password-request/{requestId}/resend", requestId)
                     .then()
                     .log().all()
                     .assertThat()
@@ -522,7 +552,29 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .log().all()
                     .assertThat()
                     .statusCode(HttpStatus.CONFLICT.value())
-                    .body("message", is("Password restore request already exists for this user"));
+                    .body("message", is("Password restore request already exists for this user. Try again later"));
+        }
+
+        @Test
+        @DisplayName("Create password restore request when request is expired expected success response")
+        public void createPasswordRestoreRequestWhenRequestIsExpiredExceptedSuccess() {
+            RestorePasswordRequest request = new RestorePasswordRequest();
+
+            request.setEmail("test@gmail.com");
+
+            given()
+                    .body(request)
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .post(BASE_URI + "/restore-password-request")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("id", notNullValue())
+                    .body("attemptsCount", is(0))
+                    .body("createAt", notNullValue())
+                    .body("updateAt", notNullValue());
         }
 
         @Test
