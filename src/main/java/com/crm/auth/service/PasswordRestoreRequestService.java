@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,8 +23,11 @@ public class PasswordRestoreRequestService {
 
     private final PasswordRestoreRequestRepository repository;
 
-    @Value("${app.max-restore-password-attempts}")
+    @Value("${app.restore-password-request.max-attempts}")
     private Integer maxAttemptsCount;
+
+    @Value("${app.restore-password-request.ttl}")
+    private Integer restoreRequestTtl;
 
     public PasswordRestoreRequest getByIdOrThrowException(UUID requestId) {
         return repository.findById(requestId)
@@ -31,10 +36,6 @@ public class PasswordRestoreRequestService {
 
     @Transactional
     public PasswordRestoreRequest createPasswordRestoreRequest(User user) {
-        if (repository.existsByUser(user)) {
-            throw new ConflictException("Password restore request already exists for this user");
-        }
-
         PasswordRestoreRequest restoreRequest = new PasswordRestoreRequest();
 
         restoreRequest.setUser(user);
@@ -69,5 +70,24 @@ public class PasswordRestoreRequestService {
         repository.delete(restoreRequest);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkExistedRequestIfExpiredDeleteOrThrowException(User user) {
+        Optional<PasswordRestoreRequest> restoreRequestOptional = repository.findByUser(user);
+
+        if (restoreRequestOptional.isEmpty()) {
+            return;
+        }
+
+        PasswordRestoreRequest existedRestoreRequest = restoreRequestOptional.get();
+
+        boolean isNotExpired = existedRestoreRequest.getCreateAt()
+                .plusSeconds(restoreRequestTtl).isAfter(Instant.now());
+
+        if (isNotExpired) {
+            throw new ConflictException("Password restore request already exists for this user. Try again later");
+        }
+
+        repository.delete(existedRestoreRequest);
+    }
 
 }

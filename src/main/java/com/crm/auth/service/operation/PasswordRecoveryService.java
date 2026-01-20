@@ -28,6 +28,8 @@ public class PasswordRecoveryService {
         User user = userService
                 .getUserByEmailOrThrowException(restorePasswordRequest.getEmail());
 
+        passwordRestoreRequestService.checkExistedRequestIfExpiredDeleteOrThrowException(user);
+
         PasswordRestoreRequest passwordRestoreRequest =
                 passwordRestoreRequestService.createPasswordRestoreRequest(user);
 
