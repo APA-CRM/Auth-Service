@@ -50,6 +50,12 @@ public class AuthFacade {
         return passwordRequestMapper.toResponse(restoreRequest);
     }
 
+    public RestorePasswordResponse resendVerificationCode(UUID requestId) {
+        PasswordRestoreRequest restoreRequest = passwordRecoveryService.resendVerificationCode(requestId);
+
+        return passwordRequestMapper.toResponse(restoreRequest);
+    }
+
     public JwtAuthenticationResponse restorePasswordByVerificationCode(
             UUID requestId, VerificationCodeRequest request, String deviceInfo
     ) {

@@ -37,6 +37,16 @@ public class PasswordRecoveryService {
     }
 
     @Transactional
+    public PasswordRestoreRequest resendVerificationCode(UUID requestId) {
+        PasswordRestoreRequest restoreRequest =
+                passwordRestoreRequestService.getByIdOrThrowException(requestId);
+
+        verificationCodeSender.sendVerificationCode(restoreRequest.getUser().getEmail(), restoreRequest.getVerificationCode());
+
+        return restoreRequest;
+    }
+
+    @Transactional
     public User checkVerificationCodeAndGetUser(UUID requestId, VerificationCodeRequest request) {
         PasswordRestoreRequest restoreRequest =
                 passwordRestoreRequestService.getByIdOrThrowException(requestId);

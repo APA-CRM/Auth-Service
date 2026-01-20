@@ -65,6 +65,13 @@ public class AuthController {
         return authFacade.createRequestToRestorePassword(request);
     }
 
+    @PatchMapping("/restore-password-request/{requestId}/resend")
+    public RestorePasswordResponse resendVerificationCode(
+            @PathVariable("requestId") UUID requestId
+    ) {
+        return authFacade.resendVerificationCode(requestId);
+    }
+
     @PutMapping("/restore-password-request/{requestId}/restore-password")
     public JwtAuthenticationResponse restorePasswordByVerificationCode(
             @PathVariable("requestId")
@@ -76,6 +83,7 @@ public class AuthController {
     ) {
         return authFacade.restorePasswordByVerificationCode(requestId, request, deviceInfo);
     }
+
 
     // TODO: Move to the Internal API
     @GetMapping("authorize")
