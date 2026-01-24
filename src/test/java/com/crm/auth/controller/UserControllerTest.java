@@ -1,6 +1,7 @@
 package com.crm.auth.controller;
 
 import com.crm.auth.BaseIntegrationTest;
+import com.crm.auth.dto.request.UpdateUserPasswordRequest;
 import com.crm.auth.dto.request.UserUpdateRequest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -161,6 +162,57 @@ class UserControllerTest extends BaseIntegrationTest {
                 .body("fullName", is("Artem Syrnik"))
                 .body("firstName", is(request.getFirstName()))
                 .body("lastName", is(request.getLastName()));
+    }
+
+    @Test
+    @DisplayName("Update user password by ID expected success response")
+    public void updateUserPasswordByIdExpectedSuccess() {
+
+        final int userId = 101;
+
+        UpdateUserPasswordRequest request = new UpdateUserPasswordRequest();
+        request.setPassword("12345");
+
+        given()
+                .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER_NAME, userId)
+                .when()
+                .body(request)
+                .patch(BASE_URI + "/{userId}/update-password", userId)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("id", is(userId))
+                .body("login", notNullValue())
+                .body("email", notNullValue())
+                .body("phoneNumber", notNullValue())
+                .body("aboutYourself", notNullValue())
+                .body("fullName", notNullValue())
+                .body("firstName", notNullValue())
+                .body("lastName", notNullValue());
+    }
+
+    @Test
+    @DisplayName("Update user password by ID when updating not own profile expected forbidden response")
+    public void updateUserPasswordByFromAnotherIdIdExpectedForbidden() {
+
+        final int userId = 101;
+
+        UpdateUserPasswordRequest request = new UpdateUserPasswordRequest();
+        request.setPassword("12345");
+
+        given()
+                .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER_NAME, 102)
+                .when()
+                .body(request)
+                .patch(BASE_URI + "/{userId}/update-password", userId)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value())
+                .body("message", is("You can only update your own profile."));
     }
 
     @Test

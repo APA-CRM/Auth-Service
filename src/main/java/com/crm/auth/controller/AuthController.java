@@ -1,16 +1,17 @@
 package com.crm.auth.controller;
 
-import com.crm.auth.dto.request.RefreshJwtTokenRequest;
-import com.crm.auth.dto.request.SignInRequest;
-import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.dto.request.*;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
-import com.crm.auth.facade.AuthenticationFacade;
+import com.crm.auth.dto.response.RestorePasswordResponse;
+import com.crm.auth.facade.AuthFacade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
@@ -20,7 +21,7 @@ import static org.springframework.http.HttpHeaders.USER_AGENT;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationFacade authenticationFacade;
+    private final AuthFacade authFacade;
 
     @PostMapping("/sign-in")
     public JwtAuthenticationResponse signIn(
@@ -30,7 +31,7 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.signIn(request, deviceInfo);
+        return authFacade.signIn(request, deviceInfo);
     }
 
     @PostMapping("/sign-up")
@@ -41,7 +42,7 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.signUp(request, deviceInfo);
+        return authFacade.signUp(request, deviceInfo);
     }
 
     @PostMapping("/refresh")
@@ -52,17 +53,48 @@ public class AuthController {
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
-        return authenticationFacade.refreshJwtToken(request, deviceInfo);
+        return authFacade.refreshJwtToken(request, deviceInfo);
     }
 
+    @PostMapping("/restore-password-request")
+    public RestorePasswordResponse createRequestToRestorePassword(
+            @Valid
+            @RequestBody
+            RestorePasswordRequest request
+    ) {
+        return authFacade.createRequestToRestorePassword(request);
+    }
+
+    @PatchMapping("/restore-password-request/{requestId}/resend")
+    public RestorePasswordResponse resendVerificationCode(
+            @PathVariable("requestId") UUID requestId
+    ) {
+        return authFacade.resendVerificationCode(requestId);
+    }
+
+    @PutMapping("/restore-password-request/{requestId}/restore-password")
+    public JwtAuthenticationResponse restorePasswordByVerificationCode(
+            @PathVariable("requestId")
+            UUID requestId,
+            @Valid @RequestBody
+            VerificationCodeRequest request,
+            @RequestHeader(USER_AGENT)
+            String deviceInfo
+    ) {
+        return authFacade.restorePasswordByVerificationCode(requestId, request, deviceInfo);
+    }
+
+
+    // TODO: Move to the Internal API
     @GetMapping("authorize")
     public AuthResponse authorize(
             @RequestHeader(value = AUTHORIZATION, required = false)
             String authorizationHeader
     ) {
-        return authenticationFacade.authorize(authorizationHeader);
+        return authFacade.authorize(authorizationHeader);
     }
 
+    // TODO: Move to the Internal API
     @PostMapping("/check-access")
     public AuthResponse authorizeAndCheckAccess(
             @RequestHeader(value = AUTHORIZATION, required = false)
@@ -70,7 +102,7 @@ public class AuthController {
             @RequestBody AuthorizationRequest request,
             HttpServletRequest servletRequest
     ) {
-        return authenticationFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
+        return authFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
     }
 
 }

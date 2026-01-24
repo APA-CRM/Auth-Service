@@ -2,6 +2,7 @@ package com.crm.auth.service;
 
 import com.crm.auth.dto.request.SignInRequest;
 import com.crm.auth.dto.request.SignUpRequest;
+import com.crm.auth.dto.request.UpdateUserPasswordRequest;
 import com.crm.auth.dto.request.UserUpdateRequest;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
@@ -30,6 +31,12 @@ public class UserService {
     private final PasswordEncoder encoder;
 
     private final UserMapper userMapper;
+
+    private static void checkPermissionToUpdateOrThrowException(Long userId, Long authUserId) {
+        if (!Objects.equals(userId, authUserId)) {
+            throw new ForbiddenException("You can only update your own profile.");
+        }
+    }
 
     @Transactional
     public User createUser(SignUpRequest userRequest) {
@@ -71,14 +78,29 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User is not found"));
     }
 
+    public User getUserByEmailOrThrowException(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User is not found by email"));
+    }
+
     @Transactional
     public User updateUserFromRequest(Long userId, Long authUserId, UserUpdateRequest updates) {
-        if (!Objects.equals(userId, authUserId)) {
-            throw new ForbiddenException("You can only update your own profile.");
-        }
+        checkPermissionToUpdateOrThrowException(userId, authUserId);
+
         User user = getUserByIdOrThrowException(userId);
 
         user = userMapper.updateUserFromRequest(updates, user);
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updateUserPassword(Long userId, Long authUserId, UpdateUserPasswordRequest request) {
+        checkPermissionToUpdateOrThrowException(userId, authUserId);
+
+        User user = getUserByIdOrThrowException(userId);
+
+        user.setPassword(encoder.encode(request.getPassword()));
 
         return userRepository.save(user);
     }
