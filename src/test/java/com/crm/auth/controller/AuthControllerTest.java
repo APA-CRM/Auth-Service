@@ -4,7 +4,9 @@ import com.crm.auth.BaseIntegrationTest;
 import com.crm.auth.dto.request.*;
 import com.crm.auth.feign.MainClient;
 import com.crm.auth.persistance.entity.PasswordRestoreRequest;
+import com.crm.auth.persistance.entity.RefreshToken;
 import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
+import com.crm.auth.persistance.repository.RefreshTokenRepository;
 import com.crm.auth.service.UserPermissionService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -43,16 +45,15 @@ class AuthControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private PasswordRestoreRequestRepository restoreRequestRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     @MockitoBean
     private RabbitTemplate rabbitTemplate;
-
     @MockitoBean
     private UserPermissionService userPermissionService;
-
     @MockitoBean
     private MainClient mainClient;
-
 
     @Nested
     @DisplayName("Authentication tests")
@@ -98,14 +99,14 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .then()
                     .log().all()
                     .assertThat()
-                    .statusCode(HttpStatus.FORBIDDEN.value())
+                    .statusCode(HttpStatus.UNAUTHORIZED.value())
                     .body("message", is("Wrong login or password"));
         }
 
         @Test
         @DisplayName("Refresh JWT token with Auth API expected success")
         public void refreshJwtTokenExpectedSuccess() {
-            RefreshJwtTokenRequest request = new RefreshJwtTokenRequest();
+            RefreshTokenRequest request = new RefreshTokenRequest();
 
             request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
 
@@ -126,7 +127,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Refresh JWT token with Auth API when token is not valid expected unauthorized")
         public void refreshJwtTokenWhenTokenNotValidExpectedUnauthorized() {
-            RefreshJwtTokenRequest request = new RefreshJwtTokenRequest();
+            RefreshTokenRequest request = new RefreshTokenRequest();
 
             request.setRefreshToken("ep9rgbe9bgo3bpgbepgegpergq[wpe]p.zxc;,qweberbgebgop23234324r23423e");
 
@@ -145,7 +146,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Refresh JWT token with Auth API when token is expired expected unauthorized")
         public void refreshJwtTokenWhenTokenExpiredExpectedUnauthorized() {
-            RefreshJwtTokenRequest request = new RefreshJwtTokenRequest();
+            RefreshTokenRequest request = new RefreshTokenRequest();
 
             request.setRefreshToken("QZWNxib69rfV2RbJy3PRf8hk9OovDKwqaMq39rLu4dc8xsI9m0193mYoRzmXVrYnNzc");
 
@@ -185,6 +186,29 @@ class AuthControllerTest extends BaseIntegrationTest {
                     .body("refreshToken", notNullValue())
                     .body("tokenType", notNullValue());
         }
+
+        @Test
+        @DisplayName("Sign up request expected success")
+        public void logoutExpectedSuccess() {
+            RefreshTokenRequest request = new RefreshTokenRequest();
+
+            request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
+
+            given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .body(request)
+                    .post(BASE_URI + "/logout")
+                    .then()
+                    .log().all()
+                    .assertThat()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            Optional<RefreshToken> tokenOptional = refreshTokenRepository.findByToken(request.getRefreshToken());
+
+            assertTrue(tokenOptional.isEmpty());
+        }
+
     }
 
     @Nested

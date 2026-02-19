@@ -1,6 +1,6 @@
 package com.crm.auth.service.operation;
 
-import com.crm.auth.dto.request.RefreshJwtTokenRequest;
+import com.crm.auth.dto.request.RefreshTokenRequest;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.enums.TokenType;
 import com.crm.auth.persistance.entity.RefreshToken;
@@ -17,7 +17,7 @@ public class RefreshTokenProvider {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    public JwtAuthenticationResponse refreshJwtToken(RefreshJwtTokenRequest request, String deviceInfo) {
+    public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String deviceInfo) {
 
         RefreshToken refreshToken = refreshTokenService
                 .validateAndRecreateRefreshToken(request.getRefreshToken(), deviceInfo);

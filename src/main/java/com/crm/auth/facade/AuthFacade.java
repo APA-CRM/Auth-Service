@@ -33,8 +33,12 @@ public class AuthFacade {
         return authenticationService.signUp(request, deviceInfo);
     }
 
-    public JwtAuthenticationResponse refreshJwtToken(RefreshJwtTokenRequest request, String deviceInfo) {
+    public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String deviceInfo) {
         return refreshTokenProvider.refreshJwtToken(request, deviceInfo);
+    }
+
+    public void logout(RefreshTokenRequest request) {
+        authenticationService.logout(request.getRefreshToken());
     }
 
     public RestorePasswordResponse createRequestToRestorePassword(RestorePasswordRequest restorePasswordRequest) {

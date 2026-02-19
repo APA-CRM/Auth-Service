@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 
@@ -58,6 +59,19 @@ public class RefreshTokenService {
         updateRefreshTokenEntity(refreshToken, deviceInfo);
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Transactional
+    public void deleteByToken(String refreshToken) {
+        Optional<RefreshToken> tokenOptional = refreshTokenRepository.findByToken(refreshToken);
+
+        if (tokenOptional.isEmpty()) {
+            return;
+        }
+
+        RefreshToken token = tokenOptional.get();
+
+        refreshTokenRepository.delete(token);
     }
 
     private RefreshToken getRefreshTokenByDeviceInfoAndUserId(String deviceInfo, User user) {

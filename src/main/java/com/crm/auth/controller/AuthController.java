@@ -6,6 +6,7 @@ import com.crm.auth.dto.response.RestorePasswordResponse;
 import com.crm.auth.facade.AuthFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -45,11 +46,21 @@ public class AuthController {
     public JwtAuthenticationResponse refreshJwtToken(
             @Valid
             @RequestBody
-            RefreshJwtTokenRequest request,
+            RefreshTokenRequest request,
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
         return authFacade.refreshJwtToken(request, deviceInfo);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(
+            @Valid
+            @RequestBody
+            RefreshTokenRequest request
+    ) {
+        authFacade.logout(request);
     }
 
     @PostMapping("/restore-password-request")

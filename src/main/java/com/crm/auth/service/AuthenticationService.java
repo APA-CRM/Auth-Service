@@ -45,4 +45,8 @@ public class AuthenticationService {
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
 
+    public void logout(String refreshToken) {
+        refreshTokenService.deleteByToken(refreshToken);
+    }
+
 }

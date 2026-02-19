@@ -10,6 +10,7 @@ import com.crm.auth.persistance.repository.UserRepository;
 import com.crm.sharedlib.core.exception.ConflictException;
 import com.crm.sharedlib.core.exception.ForbiddenException;
 import com.crm.sharedlib.core.exception.NotFoundException;
+import com.crm.sharedlib.core.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,12 +56,10 @@ public class UserService {
 
     public User validateUserForSignInRequest(SignInRequest request) {
         User user = userRepository.findByLogin(request.getLogin())
-                // TODO: UnauthorizedException must be thrown instead of ForbiddenException
-                .orElseThrow(() -> new ForbiddenException("Wrong login or password"));
+                .orElseThrow(() -> new UnauthorizedException("Wrong login or password"));
 
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
-            // TODO: UnauthorizedException must be thrown instead of ForbiddenException
-            throw new ForbiddenException("Wrong login or password");
+            throw new UnauthorizedException("Wrong login or password");
         }
 
         return user;
