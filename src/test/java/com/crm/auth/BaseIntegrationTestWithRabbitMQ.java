@@ -15,7 +15,7 @@ public abstract class BaseIntegrationTestWithRabbitMQ extends BaseIntegrationTes
 
     @BeforeAll
     public static void configureRabbit() {
-        rabbitMQContainer = new RabbitMQContainer("rabbitmq:3-management");
+        rabbitMQContainer = new RabbitMQContainer("rabbitmq:4.1-management");
         rabbitMQContainer.withExposedPorts(5672, 15672);
 
         rabbitMQContainer.start();

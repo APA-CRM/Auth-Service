@@ -4,16 +4,13 @@ import com.crm.auth.dto.request.*;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
 import com.crm.auth.dto.response.RestorePasswordResponse;
 import com.crm.auth.facade.AuthFacade;
-import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
-import com.crm.sharedlib.core.dto.response.AuthResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @RestController
@@ -49,11 +46,21 @@ public class AuthController {
     public JwtAuthenticationResponse refreshJwtToken(
             @Valid
             @RequestBody
-            RefreshJwtTokenRequest request,
+            RefreshTokenRequest request,
             @RequestHeader(USER_AGENT)
             String deviceInfo
     ) {
         return authFacade.refreshJwtToken(request, deviceInfo);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(
+            @Valid
+            @RequestBody
+            RefreshTokenRequest request
+    ) {
+        authFacade.logout(request);
     }
 
     @PostMapping("/restore-password-request")
@@ -82,27 +89,6 @@ public class AuthController {
             String deviceInfo
     ) {
         return authFacade.restorePasswordByVerificationCode(requestId, request, deviceInfo);
-    }
-
-
-    // TODO: Move to the Internal API
-    @GetMapping("authorize")
-    public AuthResponse authorize(
-            @RequestHeader(value = AUTHORIZATION, required = false)
-            String authorizationHeader
-    ) {
-        return authFacade.authorize(authorizationHeader);
-    }
-
-    // TODO: Move to the Internal API
-    @PostMapping("/check-access")
-    public AuthResponse authorizeAndCheckAccess(
-            @RequestHeader(value = AUTHORIZATION, required = false)
-            String authorizationHeader,
-            @RequestBody AuthorizationRequest request,
-            HttpServletRequest servletRequest
-    ) {
-        return authFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
     }
 
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class RefreshJwtTokenRequest {
+public class RefreshTokenRequest {
 
     @NotNull(message = "Refresh token can't be null")
     private String refreshToken;
