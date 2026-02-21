@@ -1,5 +1,6 @@
 package com.crm.auth.service;
 
+import com.crm.auth.dto.JwtPayload;
 import com.crm.auth.feign.MainClient;
 import com.crm.auth.persistance.entity.redis.UserPermission;
 import com.crm.auth.service.checker.PermissionChecker;
@@ -29,44 +30,40 @@ public class AuthorizationService {
 
     private final MainClient mainClient;
 
-    public String getTokenAndValidate(String authorizationHeader, Long organizationId) {
+    public AuthResponse authorize(String authorizationHeader) {
+        JwtPayload payload = getToken(authorizationHeader);
+
+        return new AuthResponse(payload.getId(), payload.getLogin());
+    }
+
+    public AuthResponse authorizeAndCheckAccess(
+            String authorizationHeader, Long organizationId,
+            AuthorizationRequest request
+    ) {
+        JwtPayload payload = getToken(authorizationHeader, organizationId);
+
+        UserPermission userPermission =
+                userPermissionService.getUserPermission(organizationId, (long) payload.getId()).
+                        orElseGet(() -> fetchUserPermissionFromMainServiceAndSave(organizationId, (long) payload.getId()));
+
+        permissionChecker.checkUserPermission(userPermission, request);
+
+        return new AuthResponse(payload.getId(), payload.getLogin());
+    }
+
+    private JwtPayload getToken(String authorizationHeader, Long organizationId) {
         if (isNull(organizationId)) {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        return getTokenAndValidate(authorizationHeader);
+        return getToken(authorizationHeader);
     }
 
-    public String getTokenAndValidate(String authorizationHeader) {
+    private JwtPayload getToken(String authorizationHeader) {
         String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
                 .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
 
-        boolean expired = jwtService.isExpired(token);
-
-        if (expired) {
-            throw new UnauthorizedException("Unauthorized");
-        }
-
-        return token;
-    }
-
-    public AuthResponse authorize(String token) {
         return jwtService.getPayloadFromJwtToken(token);
-    }
-
-    public AuthResponse authorizeAndCheckAccess(String token, Long organizationId, AuthorizationRequest request) {
-
-        AuthResponse payload = jwtService.getPayloadFromJwtToken(token);
-
-        Long userId = Long.valueOf(payload.getId());
-
-        UserPermission userPermission =
-                userPermissionService.getUserPermission(organizationId, userId).
-                        orElseGet(() -> fetchUserPermissionFromMainServiceAndSave(organizationId, userId));
-
-        permissionChecker.checkUserPermission(userPermission, request);
-
-        return payload;
     }
 
     private UserPermission fetchUserPermissionFromMainServiceAndSave(Long organizationId, Long userId) {

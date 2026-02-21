@@ -15,9 +15,7 @@ public class InternalAuthFacade {
     private final AuthorizationService authorizationService;
 
     public AuthResponse authorize(String authorizationHeader) {
-        String token = authorizationService.getTokenAndValidate(authorizationHeader);
-
-        return authorizationService.authorize(token);
+        return authorizationService.authorize(authorizationHeader);
     }
 
     public AuthResponse authorizeAndCheckAccess(
@@ -27,9 +25,7 @@ public class InternalAuthFacade {
         Long organizationId = OrganizationIdExtractor
                 .extractOrganizationIdFromRequest(servletRequest, request.getUri());
 
-        String token = authorizationService.getTokenAndValidate(authorizationHeader, organizationId);
-
-        return authorizationService.authorizeAndCheckAccess(token, organizationId, request);
+        return authorizationService.authorizeAndCheckAccess(authorizationHeader, organizationId, request);
     }
 
 }

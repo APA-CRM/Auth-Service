@@ -1,9 +1,8 @@
 package com.crm.auth.service;
 
-import com.crm.sharedlib.core.dto.response.AuthResponse;
+import com.crm.auth.dto.JwtPayload;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -37,6 +36,19 @@ public class JwtService {
                 .compact();
     }
 
+    public JwtPayload getPayloadFromJwtToken(String token) {
+        Claims claims = getClaims(token);
+
+        if (isExpired(claims)) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        Integer userId = (int) claims.get(USER_ID_KEY);
+        String userLogin = (String) claims.get(USER_LOGIN_KEY);
+
+        return new JwtPayload(userId, userLogin, null);
+    }
+
     private Claims getClaims(String token) {
         try {
             return Jwts.parser()
@@ -49,21 +61,8 @@ public class JwtService {
         }
     }
 
-    public AuthResponse getPayloadFromJwtToken(String token) {
-        Claims claims = getClaims(token);
-
-        Integer userId = (int) claims.get(USER_ID_KEY);
-        String userLogin = (String) claims.get(USER_LOGIN_KEY);
-
-        return new AuthResponse(userId, userLogin);
-    }
-
-    public boolean isExpired(String token) {
-        try {
-            return getClaims(token).getExpiration().before(new Date());
-        } catch (ExpiredJwtException e) {
-            return true;
-        }
+    private boolean isExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 
     private SecretKey getSingingKey() {
