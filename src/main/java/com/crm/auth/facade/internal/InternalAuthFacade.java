@@ -16,7 +16,7 @@ public class InternalAuthFacade {
     private final AuthorizationService authorizationService;
 
     public AuthResponse authorize(AuthorizationRequest request) {
-        return authorizationService.authorize(request.getAccessToken());
+        return authorizationService.authorize(request);
     }
 
     public AuthResponse authorizeAndCheckAccess(

@@ -16,16 +16,16 @@ public class AuthFacade {
     private final AuthenticationService authenticationService;
     private final RefreshTokenProvider refreshTokenProvider;
 
-    public JwtAuthenticationResponse signIn(SignInRequest request, String deviceInfo) {
-        return authenticationService.signIn(request, deviceInfo);
+    public JwtAuthenticationResponse signIn(SignInRequest request, String userAgent) {
+        return authenticationService.signIn(request, userAgent);
     }
 
-    public JwtAuthenticationResponse signUp(SignUpRequest request, String deviceInfo) {
-        return authenticationService.signUp(request, deviceInfo);
+    public JwtAuthenticationResponse signUp(SignUpRequest request, String userAgent) {
+        return authenticationService.signUp(request, userAgent);
     }
 
-    public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String deviceInfo) {
-        return refreshTokenProvider.refreshJwtToken(request, deviceInfo);
+    public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String userAgent) {
+        return refreshTokenProvider.refreshJwtToken(request, userAgent);
     }
 
     public void logout(RefreshTokenRequest request) {

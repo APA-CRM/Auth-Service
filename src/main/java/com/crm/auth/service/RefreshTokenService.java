@@ -49,10 +49,13 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    @Transactional
-    public RefreshToken validateAndRecreateRefreshToken(String refreshTokenString, String deviceInfo) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenString)
+    public RefreshToken getRefreshTokenOfThrowUnauthorizedException(String refreshTokenString) {
+        return refreshTokenRepository.findByToken(refreshTokenString)
                 .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
+    }
+
+    @Transactional
+    public RefreshToken updateRefreshToken(RefreshToken refreshToken, String deviceInfo) {
 
         checkIfTokenExpired(refreshToken);
 

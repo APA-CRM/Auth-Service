@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 public class DeviceInfoService {
@@ -24,6 +26,10 @@ public class DeviceInfoService {
     }
 
     public boolean isTheSameDevice(String userAgentString, String deviceInfo) {
+        if (isNull(userAgentString)) {
+            return false;
+        }
+
         UserAgent.ImmutableUserAgent userAgent = userAgentAnalyzer.parse(userAgentString);
 
         DeviceInfo deviceInfoFromUserAgent = getDeviceInfo(userAgent);

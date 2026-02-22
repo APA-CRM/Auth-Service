@@ -4,6 +4,7 @@ import com.crm.auth.dto.JwtPayload;
 import com.crm.auth.persistance.entity.redis.UserPermission;
 import com.crm.auth.service.checker.PermissionChecker;
 import com.crm.auth.service.operation.UserPermissionExtractor;
+import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
 import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
@@ -19,11 +20,14 @@ import static java.util.Objects.isNull;
 public class AuthorizationService {
 
     private final JwtService jwtService;
+    private final DeviceInfoService deviceInfoService;
     private final PermissionChecker permissionChecker;
     private final UserPermissionExtractor userPermissionExtractor;
 
-    public AuthResponse authorize(String token) {
-        JwtPayload payload = getAccessTokenPayload(token);
+    public AuthResponse authorize(AuthorizationRequest request) {
+        JwtPayload payload = getAccessTokenPayload(request.getAccessToken());
+
+        throwExceptionIfDeviceIsDiffer(request.getUserAgent(), payload.getDeviceInfo());
 
         return new AuthResponse(payload.getId(), payload.getLogin());
     }
@@ -34,12 +38,22 @@ public class AuthorizationService {
     ) {
         JwtPayload payload = getAccessTokenPayload(token, organizationId);
 
+        throwExceptionIfDeviceIsDiffer(request.getUserAgent(), payload.getDeviceInfo());
+
         UserPermission userPermission =
                 userPermissionExtractor.getUserPermission(organizationId, payload.getId());
 
         permissionChecker.checkUserPermission(userPermission, request);
 
         return new AuthResponse(payload.getId(), payload.getLogin());
+    }
+
+    private void throwExceptionIfDeviceIsDiffer(String userAgent, String deviceInfo) {
+        boolean theSameDevice = deviceInfoService.isTheSameDevice(userAgent, deviceInfo);
+
+        if (!theSameDevice) {
+            throw new UnauthorizedException("Unauthorized");
+        }
     }
 
     private JwtPayload getAccessTokenPayload(String accessToken, Long organizationId) {

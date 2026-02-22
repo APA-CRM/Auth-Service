@@ -25,9 +25,9 @@ public class AuthController {
             @RequestBody
             SignInRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.signIn(request, deviceInfo);
+        return authFacade.signIn(request, userAgent);
     }
 
     @PostMapping("/sign-up")
@@ -36,9 +36,9 @@ public class AuthController {
             @RequestBody
             SignUpRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.signUp(request, deviceInfo);
+        return authFacade.signUp(request, userAgent);
     }
 
     @PostMapping("/refresh")
@@ -47,9 +47,9 @@ public class AuthController {
             @RequestBody
             RefreshTokenRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.refreshJwtToken(request, deviceInfo);
+        return authFacade.refreshJwtToken(request, userAgent);
     }
 
     @PostMapping("/logout")

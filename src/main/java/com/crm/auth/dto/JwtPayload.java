@@ -15,6 +15,6 @@ public class JwtPayload {
 
     private String login;
 
-    private String userAgent;
+    private String deviceInfo;
 
 }
