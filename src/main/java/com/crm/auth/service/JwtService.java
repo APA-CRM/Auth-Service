@@ -28,7 +28,7 @@ public class JwtService {
 
     public String generateToken(Long userId, String login) {
         return Jwts.builder()
-                .claim(USER_ID_KEY, userId)
+                .claim(USER_ID_KEY, userId.toString())
                 .claim(USER_LOGIN_KEY, login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(EXPIRATION_TIME)))
@@ -43,7 +43,7 @@ public class JwtService {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        Integer userId = (int) claims.get(USER_ID_KEY);
+        Long userId = Long.valueOf((String) claims.get(USER_ID_KEY));
         String userLogin = (String) claims.get(USER_LOGIN_KEY);
 
         return new JwtPayload(userId, userLogin, null);

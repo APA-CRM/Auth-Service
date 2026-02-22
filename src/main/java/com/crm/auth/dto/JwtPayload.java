@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class JwtPayload {
 
-    private Integer id;
+    private Long id;
 
     private String login;
 

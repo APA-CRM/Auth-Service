@@ -4,8 +4,7 @@ import com.crm.auth.dto.JwtPayload;
 import com.crm.auth.persistance.entity.redis.UserPermission;
 import com.crm.auth.service.checker.PermissionChecker;
 import com.crm.auth.service.operation.UserPermissionExtractor;
-import com.crm.auth.utils.JwtUtils;
-import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -23,40 +22,40 @@ public class AuthorizationService {
     private final PermissionChecker permissionChecker;
     private final UserPermissionExtractor userPermissionExtractor;
 
-    public AuthResponse authorize(String authorizationHeader) {
-        JwtPayload payload = getToken(authorizationHeader);
+    public AuthResponse authorize(String token) {
+        JwtPayload payload = getAccessTokenPayload(token);
 
         return new AuthResponse(payload.getId(), payload.getLogin());
     }
 
     public AuthResponse authorizeAndCheckAccess(
-            String authorizationHeader, Long organizationId,
-            AuthorizationRequest request
+            String token, Long organizationId,
+            AuthorizationWithUriAndHttpMethodRequest request
     ) {
-        JwtPayload payload = getToken(authorizationHeader, organizationId);
+        JwtPayload payload = getAccessTokenPayload(token, organizationId);
 
         UserPermission userPermission =
-                // TODO: Fix casting int to long
-                userPermissionExtractor.getUserPermission(organizationId, (long) payload.getId());
+                userPermissionExtractor.getUserPermission(organizationId, payload.getId());
 
         permissionChecker.checkUserPermission(userPermission, request);
 
         return new AuthResponse(payload.getId(), payload.getLogin());
     }
 
-    private JwtPayload getToken(String authorizationHeader, Long organizationId) {
+    private JwtPayload getAccessTokenPayload(String accessToken, Long organizationId) {
         if (isNull(organizationId)) {
             throw new UnauthorizedException("Unauthorized");
         }
 
-        return getToken(authorizationHeader);
+        return getAccessTokenPayload(accessToken);
     }
 
-    private JwtPayload getToken(String authorizationHeader) {
-        String token = JwtUtils.getJwtTokenFromAuthorizationHeader(authorizationHeader)
-                .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
+    private JwtPayload getAccessTokenPayload(String accessToken) {
+        if (isNull(accessToken)) {
+            throw new UnauthorizedException("Unauthorized");
+        }
 
-        return jwtService.getPayloadFromJwtToken(token);
+        return jwtService.getPayloadFromJwtToken(accessToken);
     }
 
 }

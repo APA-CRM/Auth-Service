@@ -3,6 +3,7 @@ package com.crm.auth.facade.internal;
 import com.crm.auth.service.AuthorizationService;
 import com.crm.sharedlib.core.annotations.Facade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import com.crm.sharedlib.core.utils.OrganizationIdExtractor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,18 +15,18 @@ public class InternalAuthFacade {
 
     private final AuthorizationService authorizationService;
 
-    public AuthResponse authorize(String authorizationHeader) {
-        return authorizationService.authorize(authorizationHeader);
+    public AuthResponse authorize(AuthorizationRequest request) {
+        return authorizationService.authorize(request.getAccessToken());
     }
 
     public AuthResponse authorizeAndCheckAccess(
-            String authorizationHeader, HttpServletRequest servletRequest,
-            AuthorizationRequest request
+            HttpServletRequest servletRequest,
+            AuthorizationWithUriAndHttpMethodRequest request
     ) {
         Long organizationId = OrganizationIdExtractor
                 .extractOrganizationIdFromRequest(servletRequest, request.getUri());
 
-        return authorizationService.authorizeAndCheckAccess(authorizationHeader, organizationId, request);
+        return authorizationService.authorizeAndCheckAccess(request.getAccessToken(), organizationId, request);
     }
 
 }

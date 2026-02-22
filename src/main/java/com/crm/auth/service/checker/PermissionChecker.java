@@ -2,7 +2,7 @@ package com.crm.auth.service.checker;
 
 import com.crm.auth.persistance.entity.redis.ResourcePermission;
 import com.crm.auth.persistance.entity.redis.UserPermission;
-import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.enums.Action;
 import com.crm.sharedlib.core.enums.Resource;
 import com.crm.sharedlib.core.exception.ForbiddenException;
@@ -82,7 +82,10 @@ public class PermissionChecker {
         return false;
     }
 
-    public void checkUserPermission(UserPermission userPermission, AuthorizationRequest request) {
+    public void checkUserPermission(
+            UserPermission userPermission,
+            AuthorizationWithUriAndHttpMethodRequest request
+    ) {
 
         HttpMethod httpMethod = HttpMethod.valueOf(request.getHttpMethodName());
 
