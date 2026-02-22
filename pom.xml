@@ -22,6 +22,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <rest-assumed.version>5.5.1</rest-assumed.version>
         <jwt.version>0.12.6</jwt.version>
+        <yauaa.version>8.1.0</yauaa.version>
     </properties>
 
     <dependencies>
@@ -69,6 +70,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.basjes.parse.useragent</groupId>
+            <artifactId>yauaa</artifactId>
+            <version>${yauaa.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
