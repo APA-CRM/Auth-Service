@@ -11,6 +11,7 @@ import com.crm.auth.service.RefreshTokenService;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class RefreshTokenProvider {
     private final DeviceInfoService deviceInfoService;
     private final RefreshTokenService refreshTokenService;
 
+    @Transactional
     public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String userAgent) {
         RefreshToken refreshToken = refreshTokenService.getRefreshTokenOfThrowUnauthorizedException(request.getRefreshToken());
 

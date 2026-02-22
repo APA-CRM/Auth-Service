@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -104,6 +105,7 @@ class AuthControllerTest extends BaseIntegrationTest {
         given()
                 .body(request)
                 .contentType(ContentType.JSON)
+                .header(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0")
                 .when()
                 .post(BASE_URI + "/refresh")
                 .then()
@@ -113,6 +115,25 @@ class AuthControllerTest extends BaseIntegrationTest {
                 .body("token", notNullValue())
                 .body("refreshToken", notNullValue())
                 .body("tokenType", notNullValue());
+    }
+
+    @Test
+    @DisplayName("Refresh JWT token with Auth API when device is differ expected unauthorized")
+    public void refreshJwtTokenWhenDeviceInfoIsDifferExpectedUnauthorized() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
+
+        request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
+
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .post(BASE_URI + "/refresh")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .body("message", is("Unauthorized"));
     }
 
     @Test

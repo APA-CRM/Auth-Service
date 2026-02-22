@@ -14,6 +14,7 @@ public class UserAgentAnalyzerConfig {
         return UserAgentAnalyzer.newBuilder()
                 .hideMatcherLoadStats()
                 .withCache(CACHE_SIZE)
+                .immediateInitialization()
                 .build();
     }
 
