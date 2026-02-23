@@ -110,24 +110,6 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Authorize when device is differ expected unauthorized")
-    public void authorizeWhenDeviceIsDifferExpectedUnauthorized() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
-
-        AuthorizationRequest request = new AuthorizationRequest(token, "PostmanRuntime/7.36.0");
-
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .body(request)
-                .post(BASE_URI + "/authorize")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(HttpStatus.UNAUTHORIZED.value());
-    }
-
-    @Test
     @DisplayName("Authorize and check access expected success")
     @Sql(scripts = {
             "classpath:sql/insertTestUsers.sql",

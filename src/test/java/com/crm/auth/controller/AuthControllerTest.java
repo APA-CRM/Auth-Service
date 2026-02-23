@@ -118,25 +118,6 @@ class AuthControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Refresh JWT token with Auth API when device is differ expected unauthorized")
-    public void refreshJwtTokenWhenDeviceInfoIsDifferExpectedUnauthorized() {
-        RefreshTokenRequest request = new RefreshTokenRequest();
-
-        request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
-
-        given()
-                .body(request)
-                .contentType(ContentType.JSON)
-                .when()
-                .post(BASE_URI + "/refresh")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(HttpStatus.UNAUTHORIZED.value())
-                .body("message", is("Unauthorized"));
-    }
-
-    @Test
     @DisplayName("Refresh JWT token with Auth API when token is not valid expected unauthorized")
     public void refreshJwtTokenWhenTokenNotValidExpectedUnauthorized() {
         RefreshTokenRequest request = new RefreshTokenRequest();

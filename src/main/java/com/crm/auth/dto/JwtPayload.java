@@ -15,6 +15,4 @@ public class JwtPayload {
 
     private String login;
 
-    private String deviceInfo;
-
 }

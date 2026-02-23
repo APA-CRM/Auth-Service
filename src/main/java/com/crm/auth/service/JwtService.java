@@ -19,7 +19,6 @@ public class JwtService {
 
     public static final String USER_ID_KEY = "userId";
     public static final String USER_LOGIN_KEY = "login";
-    public static final String DEVICE_INFO_KEY = "deviceInfo";
 
     @Value("${app.token.signing.key}")
     private String jwtSigningKey;
@@ -30,7 +29,6 @@ public class JwtService {
         return Jwts.builder()
                 .claim(USER_ID_KEY, userId.toString())
                 .claim(USER_LOGIN_KEY, login)
-                .claim(DEVICE_INFO_KEY, deviceInfo)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(EXPIRATION_TIME)))
                 .signWith(getSingingKey())
@@ -46,9 +44,8 @@ public class JwtService {
 
         Long userId = Long.valueOf((String) claims.get(USER_ID_KEY));
         String userLogin = (String) claims.get(USER_LOGIN_KEY);
-        String deviceInfo = (String) claims.get(DEVICE_INFO_KEY);
 
-        return new JwtPayload(userId, userLogin, deviceInfo);
+        return new JwtPayload(userId, userLogin);
     }
 
     private Claims getClaims(String token) {

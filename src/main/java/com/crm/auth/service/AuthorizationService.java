@@ -20,14 +20,11 @@ import static java.util.Objects.isNull;
 public class AuthorizationService {
 
     private final JwtService jwtService;
-    private final DeviceInfoService deviceInfoService;
     private final PermissionChecker permissionChecker;
     private final UserPermissionExtractor userPermissionExtractor;
 
     public AuthResponse authorize(AuthorizationRequest request) {
         JwtPayload payload = getAccessTokenPayload(request.getAccessToken());
-
-        throwExceptionIfDeviceIsDiffer(request.getUserAgent(), payload.getDeviceInfo());
 
         return new AuthResponse(payload.getId(), payload.getLogin());
     }
@@ -38,22 +35,12 @@ public class AuthorizationService {
     ) {
         JwtPayload payload = getAccessTokenPayload(token, organizationId);
 
-        throwExceptionIfDeviceIsDiffer(request.getUserAgent(), payload.getDeviceInfo());
-
         UserPermission userPermission =
                 userPermissionExtractor.getUserPermission(organizationId, payload.getId());
 
         permissionChecker.checkUserPermission(userPermission, request);
 
         return new AuthResponse(payload.getId(), payload.getLogin());
-    }
-
-    private void throwExceptionIfDeviceIsDiffer(String userAgent, String deviceInfo) {
-        boolean theSameDevice = deviceInfoService.isTheSameDevice(userAgent, deviceInfo);
-
-        if (!theSameDevice) {
-            throw new UnauthorizedException("Unauthorized");
-        }
     }
 
     private JwtPayload getAccessTokenPayload(String accessToken, Long organizationId) {
