@@ -24,7 +24,9 @@ public class AuthenticationService {
     public JwtAuthenticationResponse authenticateUser(User user, String userAgent) {
         String deviceInfo = deviceInfoService.getDeviceInfoFromUserAgent(userAgent);
 
-        RefreshToken refreshToken = refreshTokenService.getRefreshTokenBySignInRequest(user, deviceInfo);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(deviceInfo, user);
+
+        refreshTokenService.deleteUserExpiredTokens(user);
 
         String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
 
@@ -33,7 +35,7 @@ public class AuthenticationService {
 
     public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String userAgent) {
 
-        User user = userService.validateUserForSignInRequest(signInRequest);
+        User user = userService.validateAndGetUserForSignInRequest(signInRequest);
 
         return authenticateUser(user, userAgent);
     }

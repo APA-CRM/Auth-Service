@@ -19,7 +19,7 @@ import java.util.UUID;
 @Entity
 @Table(indexes = {
         @Index(columnList = "token", name = "refresh_token_token_idx"),
-        @Index(columnList = "deviceInfo,user", name = "refresh_token_device_info_user_id_idx")
+        @Index(columnList = "user, expiredAt", name = "refresh_token_user_id_expired_at_idx")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class RefreshToken {

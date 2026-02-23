@@ -29,16 +29,6 @@ public class RefreshTokenService {
     private Integer refreshTokenLength;
 
     @Transactional
-    public RefreshToken getRefreshTokenBySignInRequest(User user, String deviceInfo) {
-        RefreshToken refreshToken = getRefreshTokenByDeviceInfoAndUserId(deviceInfo, user);
-
-        updateRefreshTokenEntity(refreshToken, deviceInfo);
-        refreshToken.setUser(user);
-
-        return refreshTokenRepository.save(refreshToken);
-    }
-
-    @Transactional
     public RefreshToken createRefreshToken(String deviceInfo, User user) {
         RefreshToken refreshToken = new RefreshToken();
 
@@ -77,9 +67,9 @@ public class RefreshTokenService {
         refreshTokenRepository.delete(token);
     }
 
-    private RefreshToken getRefreshTokenByDeviceInfoAndUserId(String deviceInfo, User user) {
-        return refreshTokenRepository.findByDeviceInfoAndUser(deviceInfo, user)
-                .orElseGet(RefreshToken::new);
+    @Transactional
+    public void deleteUserExpiredTokens(User user) {
+        refreshTokenRepository.removeByUserAndExpiredAtBefore(user, Instant.now());
     }
 
     private void updateRefreshTokenEntity(RefreshToken refreshToken, String deviceInfo) {
