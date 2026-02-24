@@ -43,6 +43,6 @@ public class RefreshToken {
     private Instant createdAt;
 
     @LastModifiedDate
-    private Instant updateAt;
+    private Instant updatedAt;
 
 }

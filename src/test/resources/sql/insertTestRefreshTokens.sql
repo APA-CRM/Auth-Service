@@ -1,6 +1,6 @@
 INSERT INTO refresh_token(id, token,
                           expired_at, user_id, device_info,
-                          created_at, update_at)
+                          created_at, updated_at)
 VALUES ('32ee3ffe-b72a-46d1-9c1d-f087e0399f71', '0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU',
         CURRENT_TIMESTAMP + INTERVAL '2' DAY, 100, 'Firefox 122.0 Windows NT Desktop',
         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

@@ -20,7 +20,7 @@ public class UserSessionDto {
 
     private Instant createdAt;
 
-    private Instant updateAt;
+    private Instant updatedAt;
 
 }
 

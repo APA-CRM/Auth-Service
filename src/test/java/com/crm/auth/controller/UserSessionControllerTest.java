@@ -49,7 +49,7 @@ class UserSessionControllerTest extends BaseIntegrationTest {
                 .body("id", everyItem(notNullValue()))
                 .body("deviceInfo", everyItem(notNullValue()))
                 .body("createdAt", everyItem(notNullValue()))
-                .body("updateAt", everyItem(notNullValue()));
+                .body("updatedAt", everyItem(notNullValue()));
     }
 
     @Test
