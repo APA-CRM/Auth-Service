@@ -22,7 +22,7 @@ public class RefreshTokenProvider {
 
     @Transactional
     public JwtAuthenticationResponse refreshJwtToken(RefreshTokenRequest request, String userAgent) {
-        RefreshToken refreshToken = refreshTokenService.getRefreshTokenOfThrowUnauthorizedException(request.getRefreshToken());
+        RefreshToken refreshToken = refreshTokenService.getRefreshTokenOrThrowUnauthorizedException(request.getRefreshToken());
 
         String deviceInfo = deviceInfoService.getDeviceInfoFromUserAgent(userAgent);
 

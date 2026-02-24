@@ -4,6 +4,8 @@ import com.crm.auth.persistance.entity.RefreshToken;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.RefreshTokenRepository;
 import com.crm.auth.utils.SecureStringGenerator;
+import com.crm.sharedlib.core.exception.ForbiddenException;
+import com.crm.sharedlib.core.exception.NotFoundException;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
@@ -39,9 +43,18 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    public RefreshToken getRefreshTokenOfThrowUnauthorizedException(String refreshTokenString) {
+    public RefreshToken getRefreshTokenOrThrowException(UUID id) {
+        return refreshTokenRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Refresh token is not found"));
+    }
+
+    public RefreshToken getRefreshTokenOrThrowUnauthorizedException(String refreshTokenString) {
         return refreshTokenRepository.findByToken(refreshTokenString)
                 .orElseThrow(() -> new UnauthorizedException("Unauthorized"));
+    }
+
+    public List<RefreshToken> getRefreshTokensByUser(User user) {
+        return refreshTokenRepository.findByUser(user);
     }
 
     @Transactional
@@ -52,6 +65,18 @@ public class RefreshTokenService {
         updateRefreshTokenEntity(refreshToken, deviceInfo);
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Transactional
+    public void throwExceptionIfUserCanNotDeleteRefreshToken(RefreshToken refreshToken, Long userId) {
+        if (!refreshToken.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("You can't end this session");
+        }
+    }
+
+    @Transactional
+    public void delete(RefreshToken refreshToken) {
+        refreshTokenRepository.delete(refreshToken);
     }
 
     @Transactional

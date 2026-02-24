@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
 
     @EntityGraph(attributePaths = "user")
     Optional<RefreshToken> findByToken(String refreshToken);
+
+    List<RefreshToken> findByUser(User user);
 
     @Modifying
     void removeByUserAndExpiredAtBefore(User user, Instant beforeInstant);
