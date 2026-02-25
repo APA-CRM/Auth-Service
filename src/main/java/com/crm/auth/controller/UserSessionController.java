@@ -12,7 +12,7 @@ import java.util.UUID;
 import static com.crm.sharedlib.core.consts.CrmHeaders.USER_ID_HEADER_NAME;
 
 @RestController
-@RequestMapping("/api/sessions")
+@RequestMapping("/api/users/sessions")
 @RequiredArgsConstructor
 public class UserSessionController {
 

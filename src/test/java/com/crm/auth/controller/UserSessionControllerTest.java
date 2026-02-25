@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserSessionControllerTest extends BaseIntegrationTest {
 
-    private final static String BASE_URI = "/api/sessions";
+    private final static String BASE_URI = "/api/users/sessions";
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
