@@ -2,6 +2,7 @@ package com.crm.auth.controller;
 
 import com.crm.auth.BaseIntegrationTest;
 import com.crm.auth.persistance.entity.RefreshToken;
+import com.crm.auth.persistance.entity.User;
 import com.crm.auth.persistance.repository.RefreshTokenRepository;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -89,6 +91,30 @@ class UserSessionControllerTest extends BaseIntegrationTest {
                 .assertThat()
                 .statusCode(HttpStatus.FORBIDDEN.value())
                 .body("message", is("You can't end this session"));
+    }
+
+    @Test
+    @DisplayName("End all user's session expected success")
+    public void endAllUsersSessionExpectedSuccess() {
+
+        long userId = 100;
+
+        given()
+                .header(USER_ID_HEADER_NAME, userId)
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(BASE_URI)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        User user = new User();
+        user.setId(userId);
+
+        List<RefreshToken> tokenOptional = refreshTokenRepository.findByUser(user);
+
+        assertTrue(tokenOptional.isEmpty());
     }
 
 }

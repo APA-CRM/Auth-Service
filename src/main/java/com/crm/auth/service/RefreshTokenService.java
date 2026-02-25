@@ -75,6 +75,13 @@ public class RefreshTokenService {
     }
 
     @Transactional
+    public void deleteAllUsersRefreshTokens(User user) {
+        List<RefreshToken> tokens = getRefreshTokensByUser(user);
+
+        refreshTokenRepository.deleteAll(tokens);
+    }
+
+    @Transactional
     public void delete(RefreshToken refreshToken) {
         refreshTokenRepository.delete(refreshToken);
     }

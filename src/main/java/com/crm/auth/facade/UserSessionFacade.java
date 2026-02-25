@@ -39,4 +39,10 @@ public class UserSessionFacade {
         refreshTokenService.delete(refreshToken);
     }
 
+    public void endAllUsersSessions(Long userId) {
+        User user = userService.getUserByIdOrThrowException(userId);
+
+        refreshTokenService.deleteAllUsersRefreshTokens(user);
+    }
+
 }

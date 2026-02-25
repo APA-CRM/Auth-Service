@@ -34,4 +34,12 @@ public class UserSessionController {
         facade.endUserSession(sessionId, authUserId);
     }
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void endAllUsersSessions(
+            @RequestHeader(USER_ID_HEADER_NAME) Long userId
+    ) {
+        facade.endAllUsersSessions(userId);
+    }
+
 }
