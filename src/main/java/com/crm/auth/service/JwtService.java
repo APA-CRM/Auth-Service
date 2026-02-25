@@ -1,9 +1,8 @@
 package com.crm.auth.service;
 
-import com.crm.sharedlib.core.dto.response.AuthResponse;
+import com.crm.auth.dto.JwtPayload;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 public class JwtService {
 
     public static final String USER_ID_KEY = "userId";
-
     public static final String USER_LOGIN_KEY = "login";
 
     @Value("${app.token.signing.key}")
@@ -27,14 +25,27 @@ public class JwtService {
     @Value("${app.token.expiration}")
     private Long EXPIRATION_TIME;
 
-    public String generateToken(Long userId, String login) {
+    public String generateToken(Long userId, String login, String deviceInfo) {
         return Jwts.builder()
-                .claim(USER_ID_KEY, userId)
+                .claim(USER_ID_KEY, userId.toString())
                 .claim(USER_LOGIN_KEY, login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(EXPIRATION_TIME)))
                 .signWith(getSingingKey())
                 .compact();
+    }
+
+    public JwtPayload getPayloadFromJwtToken(String token) {
+        Claims claims = getClaims(token);
+
+        if (isExpired(claims)) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        Long userId = Long.valueOf((String) claims.get(USER_ID_KEY));
+        String userLogin = (String) claims.get(USER_LOGIN_KEY);
+
+        return new JwtPayload(userId, userLogin);
     }
 
     private Claims getClaims(String token) {
@@ -49,21 +60,8 @@ public class JwtService {
         }
     }
 
-    public AuthResponse getPayloadFromJwtToken(String token) {
-        Claims claims = getClaims(token);
-
-        Integer userId = (int) claims.get(USER_ID_KEY);
-        String userLogin = (String) claims.get(USER_LOGIN_KEY);
-
-        return new AuthResponse(userId, userLogin);
-    }
-
-    public boolean isExpired(String token) {
-        try {
-            return getClaims(token).getExpiration().before(new Date());
-        } catch (ExpiredJwtException e) {
-            return true;
-        }
+    private boolean isExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 
     private SecretKey getSingingKey() {

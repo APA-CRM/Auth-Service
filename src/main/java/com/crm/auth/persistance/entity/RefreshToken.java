@@ -18,8 +18,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(indexes = {
-        @Index(columnList = "token"),
-        @Index(columnList = "deviceInfo")
+        @Index(columnList = "token", name = "refresh_token_token_idx"),
+        @Index(columnList = "user", name = "refresh_token_user_id_idx")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class RefreshToken {
@@ -43,6 +43,6 @@ public class RefreshToken {
     private Instant createdAt;
 
     @LastModifiedDate
-    private Instant updateAt;
+    private Instant updatedAt;
 
 }

@@ -2,12 +2,14 @@ package com.crm.auth.controller.internal;
 
 import com.crm.auth.facade.internal.InternalAuthFacade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/internal/auth")
@@ -16,22 +18,17 @@ public class InternalAuthController {
 
     private final InternalAuthFacade internalAuthFacade;
 
-    @GetMapping("authorize")
-    public AuthResponse authorize(
-            @RequestHeader(value = AUTHORIZATION, required = false)
-            String authorizationHeader
-    ) {
-        return internalAuthFacade.authorize(authorizationHeader);
+    @PostMapping("/authorize")
+    public AuthResponse authorize(@RequestBody AuthorizationRequest request) {
+        return internalAuthFacade.authorize(request);
     }
 
-    @PostMapping("/check-access")
+    @PostMapping("/authorize-and-check-access")
     public AuthResponse authorizeAndCheckAccess(
-            @RequestHeader(value = AUTHORIZATION, required = false)
-            String authorizationHeader,
-            @RequestBody AuthorizationRequest request,
+            @RequestBody AuthorizationWithUriAndHttpMethodRequest request,
             HttpServletRequest servletRequest
     ) {
-        return internalAuthFacade.authorizeAndCheckAccess(authorizationHeader, servletRequest, request);
+        return internalAuthFacade.authorizeAndCheckAccess(servletRequest, request);
     }
 
 }

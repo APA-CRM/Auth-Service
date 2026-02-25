@@ -7,6 +7,7 @@ import com.crm.auth.persistance.entity.redis.UserPermission;
 import com.crm.auth.service.JwtService;
 import com.crm.auth.service.UserPermissionService;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
+import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.OrganizationUserRolesResponse;
 import com.crm.sharedlib.core.enums.Action;
 import com.crm.sharedlib.core.enums.Resource;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -49,10 +49,12 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access expected success")
     public void authorizeAndCheckAccessExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login");
+        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(token);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/");
         request.setHttpMethodName("POST");
 
@@ -73,11 +75,10 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(ORGANIZATION_ID_HEADER_NAME, 1)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -89,13 +90,17 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize expected success")
     public void authorizeExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login");
+        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+
+        AuthorizationRequest request = new AuthorizationRequest(
+                token, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+        );
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .when()
-                .get(BASE_URI + "/authorize")
+                .body(request)
+                .post(BASE_URI + "/authorize")
                 .then()
                 .log().all()
                 .assertThat()
@@ -115,10 +120,12 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
             "classpath:sql/deleteTestUsers.sql"
     }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void authorizeAndCheckAccessWhenUserPermissionIsNotInCacheExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login");
+        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(token);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/1/users/1");
         request.setHttpMethodName("POST");
 
@@ -146,11 +153,10 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(ORGANIZATION_ID_HEADER_NAME, 1)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -170,10 +176,12 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
     public void authorizeAndCheckAccessWhenDoesNotHavePermissionExpectedForbidden() {
-        final String token = jwtService.generateToken(1L, "login");
+        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(token);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/");
         request.setHttpMethodName("POST");
 
@@ -189,11 +197,10 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(ORGANIZATION_ID_HEADER_NAME, 1)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -204,10 +211,12 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
     public void authorizeAndCheckAccessWhenAccessControlsNotFoundExpectedForbidden() {
-        final String token = jwtService.generateToken(1L, "login");
+        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(token);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/1");
         request.setHttpMethodName("PUT");
 
@@ -219,10 +228,9 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -231,10 +239,10 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Authorize and check access when authorization header is not specified expected unauthorized")
-    public void authorizeAndCheckAccessWhenAuthorizationHeaderIsNotSpecifiedExpectedBadRequest() {
+    @DisplayName("Authorize and check access when access token is not specified expected unauthorized")
+    public void authorizeAndCheckAccessWhenAuthorizationHeaderIsNotSpecifiedExpectedUnauthorized() {
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
         request.setUri("/api/organizations/");
         request.setHttpMethodName("POST");
@@ -244,29 +252,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
                 .header(ORGANIZATION_ID_HEADER_NAME, "1")
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(HttpStatus.UNAUTHORIZED.value())
-                .body("message", is("Unauthorized"));
-    }
-
-    @Test
-    @DisplayName("Authorize and check access when authorization header is not specified expected unauthorized")
-    public void authorizeAndCheckAccessWhenOrganizationIdHeaderIsNotSpecifiedExpectedBadRequest() {
-
-        AuthorizationRequest request = new AuthorizationRequest();
-
-        request.setUri("/api/organizations/");
-        request.setHttpMethodName("POST");
-
-        given()
-                .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer null")
-                .when()
-                .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -278,21 +264,22 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @DisplayName("Authorize and check access when token is expired expected unauthorized")
     public void authorizeAndCheckAccessWhenTokenIsExpiredExpectedUnauthorized() {
         final String expiredtoken = "eyJhbGciOiJIUzUxMiJ9" +
-                ".eyJ1c2VySWQiOjEsImxvZ2luIjoiUGF2ZWwiLCJpYXQiOjE3NDI0MDg5MTQsImV4cCI6MTc0MjQxMDcxNH0.aR8_oJiy_S" +
-                "7ef6O9D_8nJqAj0wMLTW65I2dbMN-WH_5AwvaxMiNlgRGjVuTdXq5m4ybeH-DPeTKEW6YWGibCZg";
+                ".eyJ1c2VySWQiOjEsImxvZ2luIjoiUGF2ZWwiLCJpYXQiOjE3NDI0MDg5MTQsImV4cCI6MTc0MjQxMDcxNH0" +
+                ".aR8_oJiy_S7ef6O9D_8nJqAj0wMLTW65I2dbMN-WH_5AwvaxMiNlgRGjVuTdXq5m4ybeH-DPeTKEW6YWGibCZg";
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(expiredtoken);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/");
         request.setHttpMethodName("POST");
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredtoken)
                 .header(ORGANIZATION_ID_HEADER_NAME, 1)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()
@@ -307,18 +294,19 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
                 "eyJJc3N1ZXIiOiJJc3N1ZXIiLCJpZCI6IjEiLCJsb2dpbiI6InRlc3QiLCJleHAiOjE3NTIzMzE1NDIsImlhdCI6MTc1MjMzMTU0Mn0." +
                 "n_Lepi7ESJhxl3BdN8RBmI4mBzSWwiCudXDv5RL3FkM";
 
-        AuthorizationRequest request = new AuthorizationRequest();
+        AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
+        request.setAccessToken(wrongJwt);
+        request.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
         request.setUri("/api/organizations/");
         request.setHttpMethodName("POST");
 
         given()
                 .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + wrongJwt)
                 .header(ORGANIZATION_ID_HEADER_NAME, 1)
                 .when()
                 .body(request)
-                .post(BASE_URI + "/check-access")
+                .post(BASE_URI + "/authorize-and-check-access")
                 .then()
                 .log().all()
                 .assertThat()

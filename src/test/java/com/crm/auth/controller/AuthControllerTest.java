@@ -1,30 +1,28 @@
 package com.crm.auth.controller;
 
 import com.crm.auth.BaseIntegrationTest;
-import com.crm.auth.dto.request.*;
+import com.crm.auth.dto.request.RefreshTokenRequest;
+import com.crm.auth.dto.request.SignInRequest;
+import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.feign.MainClient;
-import com.crm.auth.persistance.entity.PasswordRestoreRequest;
 import com.crm.auth.persistance.entity.RefreshToken;
-import com.crm.auth.persistance.repository.PasswordRestoreRequestRepository;
 import com.crm.auth.persistance.repository.RefreshTokenRepository;
 import com.crm.auth.service.UserPermissionService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Sql(scripts = {
@@ -44,8 +42,6 @@ class AuthControllerTest extends BaseIntegrationTest {
     private final static String BASE_URI = "/api/auth";
 
     @Autowired
-    private PasswordRestoreRequestRepository restoreRequestRepository;
-    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
     @MockitoBean
@@ -55,360 +51,155 @@ class AuthControllerTest extends BaseIntegrationTest {
     @MockitoBean
     private MainClient mainClient;
 
-    @Nested
-    @DisplayName("Authentication tests")
-    public class AuthenticationTest {
+    @Test
+    @DisplayName("Sign in with Auth API expected success")
+    public void signInExpectedSuccess() {
 
-        @Test
-        @DisplayName("Sign in with Auth API expected success")
-        public void signInExpectedSuccess() {
+        SignInRequest request = new SignInRequest();
 
-            SignInRequest request = new SignInRequest();
+        request.setLogin("LoginUser");
+        request.setPassword("TepydIV^nG&&N4V");
 
-            request.setLogin("LoginUser");
-            request.setPassword("TepydIV^nG&&N4V");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/sign-in")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("token", notNullValue())
-                    .body("refreshToken", notNullValue())
-                    .body("tokenType", notNullValue());
-        }
-
-        @Test
-        @DisplayName("Sign in with Auth API when wrong payload expected forbidden")
-        public void signInWhenWrongPayloadExpectedForbidden() {
-
-            SignInRequest request = new SignInRequest();
-
-            request.setLogin("NotExists");
-            request.setPassword("TepydIV^nG&&N4V");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/sign-in")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Wrong login or password"));
-        }
-
-        @Test
-        @DisplayName("Refresh JWT token with Auth API expected success")
-        public void refreshJwtTokenExpectedSuccess() {
-            RefreshTokenRequest request = new RefreshTokenRequest();
-
-            request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/refresh")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("token", notNullValue())
-                    .body("refreshToken", notNullValue())
-                    .body("tokenType", notNullValue());
-        }
-
-        @Test
-        @DisplayName("Refresh JWT token with Auth API when token is not valid expected unauthorized")
-        public void refreshJwtTokenWhenTokenNotValidExpectedUnauthorized() {
-            RefreshTokenRequest request = new RefreshTokenRequest();
-
-            request.setRefreshToken("ep9rgbe9bgo3bpgbepgegpergq[wpe]p.zxc;,qweberbgebgop23234324r23423e");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/refresh")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Unauthorized"));
-        }
-
-        @Test
-        @DisplayName("Refresh JWT token with Auth API when token is expired expected unauthorized")
-        public void refreshJwtTokenWhenTokenExpiredExpectedUnauthorized() {
-            RefreshTokenRequest request = new RefreshTokenRequest();
-
-            request.setRefreshToken("QZWNxib69rfV2RbJy3PRf8hk9OovDKwqaMq39rLu4dc8xsI9m0193mYoRzmXVrYnNzc");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/refresh")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
-                    .body("message", is("Unauthorized"));
-        }
-
-        @Test
-        @DisplayName("Sign up request expected success")
-        public void signUpExpectedSuccess() {
-            SignUpRequest request = new SignUpRequest();
-
-            request.setEmail("newUser@gmail.com");
-            request.setLogin("login");
-            request.setFirstName("Jack");
-            request.setLastName("Pork");
-            request.setGeneratePassword(true);
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .body(request)
-                    .post(BASE_URI + "/sign-up")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("token", notNullValue())
-                    .body("refreshToken", notNullValue())
-                    .body("tokenType", notNullValue());
-        }
-
-        @Test
-        @DisplayName("Sign up request expected success")
-        public void logoutExpectedSuccess() {
-            RefreshTokenRequest request = new RefreshTokenRequest();
-
-            request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
-
-            given()
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .body(request)
-                    .post(BASE_URI + "/logout")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
-
-            Optional<RefreshToken> tokenOptional = refreshTokenRepository.findByToken(request.getRefreshToken());
-
-            assertTrue(tokenOptional.isEmpty());
-        }
-
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .post(BASE_URI + "/sign-in")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("token", notNullValue())
+                .body("refreshToken", notNullValue())
+                .body("tokenType", notNullValue());
     }
 
-    @Nested
-    @DisplayName("Restore password tests")
-    public class RestorePasswordTest {
+    @Test
+    @DisplayName("Sign in with Auth API when wrong payload expected forbidden")
+    public void signInWhenWrongPayloadExpectedForbidden() {
 
-        @Test
-        @DisplayName("Create password restore request expected success response")
-        @Sql(scripts = {
-                "classpath:sql/insertTestUsers.sql",
-                "classpath:sql/insertTestRoles.sql",
-                "classpath:sql/insertTestRefreshTokens.sql"
-        }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-        @Sql(scripts = {
-                "classpath:sql/deleteTestPasswordRestoreRequest.sql",
-                "classpath:sql/deleteTestRefreshTokens.sql",
-                "classpath:sql/deleteTestRoles.sql",
-                "classpath:sql/deleteTestUsers.sql"
-        }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-        public void createPasswordRestoreRequestExceptedSuccess() {
-            RestorePasswordRequest request = new RestorePasswordRequest();
+        SignInRequest request = new SignInRequest();
 
-            request.setEmail("test@gmail.com");
+        request.setLogin("NotExists");
+        request.setPassword("TepydIV^nG&&N4V");
 
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/restore-password-request")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", notNullValue())
-                    .body("attemptsCount", is(0))
-                    .body("createAt", notNullValue())
-                    .body("updateAt", notNullValue());
-        }
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .post(BASE_URI + "/sign-in")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .body("message", is("Wrong login or password"));
+    }
 
-        @Test
-        @DisplayName("Resend verification code expected success response")
-        public void resendVerificationCodeExceptedSuccess() {
-            UUID requestId = UUID.fromString("1988e512-72e4-4982-a554-fb890f863618");
+    @Test
+    @DisplayName("Refresh JWT token with Auth API expected success")
+    public void refreshJwtTokenExpectedSuccess() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
 
-            given()
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .patch(BASE_URI + "/restore-password-request/{requestId}/resend", requestId)
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", notNullValue())
-                    .body("attemptsCount", is(0))
-                    .body("createAt", notNullValue())
-                    .body("updateAt", notNullValue());
-        }
+        request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
 
-        @Test
-        @DisplayName("Create password restore request when user already have it expected conflict response")
-        public void createPasswordRestoreRequestWhenUserAlreadyHaveItExceptedConflict() {
-            RestorePasswordRequest request = new RestorePasswordRequest();
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0")
+                .when()
+                .post(BASE_URI + "/refresh")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("token", notNullValue())
+                .body("refreshToken", notNullValue())
+                .body("tokenType", notNullValue());
+    }
 
-            request.setEmail("test2@gmail.com");
+    @Test
+    @DisplayName("Refresh JWT token with Auth API when token is not valid expected unauthorized")
+    public void refreshJwtTokenWhenTokenNotValidExpectedUnauthorized() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
 
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/restore-password-request")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.CONFLICT.value())
-                    .body("message", is("Password restore request already exists for this user. Try again later"));
-        }
+        request.setRefreshToken("ep9rgbe9bgo3bpgbepgegpergq[wpe]p.zxc;,qweberbgebgop23234324r23423e");
 
-        @Test
-        @DisplayName("Create password restore request when request is expired expected success response")
-        public void createPasswordRestoreRequestWhenRequestIsExpiredExceptedSuccess() {
-            RestorePasswordRequest request = new RestorePasswordRequest();
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .post(BASE_URI + "/refresh")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .body("message", is("Unauthorized"));
+    }
 
-            request.setEmail("test@gmail.com");
+    @Test
+    @DisplayName("Refresh JWT token with Auth API when token is expired expected unauthorized")
+    public void refreshJwtTokenWhenTokenExpiredExpectedUnauthorized() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
 
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .post(BASE_URI + "/restore-password-request")
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", notNullValue())
-                    .body("attemptsCount", is(0))
-                    .body("createAt", notNullValue())
-                    .body("updateAt", notNullValue());
-        }
+        request.setRefreshToken("QZWNxib69rfV2RbJy3PRf8hk9OovDKwqaMq39rLu4dc8xsI9m0193mYoRzmXVrYnNzc");
 
-        @Test
-        @DisplayName("Restore password by verification code expected success response")
-        public void restorePasswordByVerificationCodeExceptedSuccess() {
-            UUID requestId = UUID.fromString("1988e512-72e4-4982-a554-fb890f863618");
+        given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when()
+                .post(BASE_URI + "/refresh")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .body("message", is("Unauthorized"));
+    }
 
-            VerificationCodeRequest request = new VerificationCodeRequest();
+    @Test
+    @DisplayName("Sign up request expected success")
+    public void signUpExpectedSuccess() {
+        SignUpRequest request = new SignUpRequest();
 
-            request.setVerificationCode("0011");
+        request.setEmail("newUser@gmail.com");
+        request.setLogin("login");
+        request.setFirstName("Jack");
+        request.setLastName("Pork");
+        request.setGeneratePassword(true);
 
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .put(BASE_URI + "/restore-password-request/{requestId}/restore-password", requestId)
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("token", notNullValue())
-                    .body("refreshToken", notNullValue())
-                    .body("tokenType", notNullValue());
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .body(request)
+                .post(BASE_URI + "/sign-up")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("token", notNullValue())
+                .body("refreshToken", notNullValue())
+                .body("tokenType", notNullValue());
+    }
 
-            Optional<PasswordRestoreRequest> requestOptional =
-                    restoreRequestRepository.findById(requestId);
+    @Test
+    @DisplayName("Sign up request expected success")
+    public void logoutExpectedSuccess() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
 
-            assertTrue(requestOptional.isEmpty());
-        }
+        request.setRefreshToken("0L+INmmmYyJDlYkJSr9qGdF+AMY/ye/vJYuxo+uJu1mt4I3fY18OkFwjoMplvT/f+zU");
 
-        @Test
-        @DisplayName("Restore password by verification code when request does not exists expected not found response")
-        public void restorePasswordByVerificationCodeWhenRequestDoesNotExistsExceptedNotFound() {
-            UUID requestId = UUID.fromString("1988e512-72e4-4982-a554-fb890f863611");
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .body(request)
+                .post(BASE_URI + "/logout")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.NO_CONTENT.value());
 
-            VerificationCodeRequest request = new VerificationCodeRequest();
+        Optional<RefreshToken> tokenOptional = refreshTokenRepository.findByToken(request.getRefreshToken());
 
-            request.setVerificationCode("0011");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .put(BASE_URI + "/restore-password-request/{requestId}/restore-password", requestId)
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("message", is("Password restore request is not found"));
-        }
-
-        @Test
-        @DisplayName("Restore password by verification code when wrong code expected forbidden response")
-        public void restorePasswordByVerificationCodeWhenWrongCodeExceptedForbidden() {
-            UUID requestId = UUID.fromString("1988e512-72e4-4982-a554-fb890f863618");
-
-            VerificationCodeRequest request = new VerificationCodeRequest();
-
-            request.setVerificationCode("0000");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .put(BASE_URI + "/restore-password-request/{requestId}/restore-password", requestId)
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.FORBIDDEN.value())
-                    .body("message", is("Invalid verification code"));
-
-            Optional<PasswordRestoreRequest> requestOptional =
-                    restoreRequestRepository.findById(requestId);
-
-            assertTrue(requestOptional.isPresent());
-
-            PasswordRestoreRequest restoreRequest = requestOptional.get();
-
-            assertEquals(1, restoreRequest.getAttemptsCount());
-        }
-
-        @Test
-        @DisplayName("Restore password by verification code when attempts excided expected forbidden response")
-        public void restorePasswordByVerificationCodeWhenAttemptsExcidedExceptedForbidden() {
-            UUID requestId = UUID.fromString("c974714f-532f-4844-8d16-731c299a1cf3");
-
-            VerificationCodeRequest request = new VerificationCodeRequest();
-
-            request.setVerificationCode("0000");
-
-            given()
-                    .body(request)
-                    .contentType(ContentType.JSON)
-                    .when()
-                    .put(BASE_URI + "/restore-password-request/{requestId}/restore-password", requestId)
-                    .then()
-                    .log().all()
-                    .assertThat()
-                    .statusCode(HttpStatus.FORBIDDEN.value())
-                    .body("message", is("Max attempts count excided"));
-        }
-
-
+        assertTrue(tokenOptional.isEmpty());
     }
 
 }

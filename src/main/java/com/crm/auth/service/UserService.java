@@ -54,7 +54,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User validateUserForSignInRequest(SignInRequest request) {
+    public User validateAndGetUserForSignInRequest(SignInRequest request) {
         User user = userRepository.findByLogin(request.getLogin())
                 .orElseThrow(() -> new UnauthorizedException("Wrong login or password"));
 

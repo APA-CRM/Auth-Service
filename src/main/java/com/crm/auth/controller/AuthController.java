@@ -1,15 +1,14 @@
 package com.crm.auth.controller;
 
-import com.crm.auth.dto.request.*;
+import com.crm.auth.dto.request.RefreshTokenRequest;
+import com.crm.auth.dto.request.SignInRequest;
+import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.dto.response.JwtAuthenticationResponse;
-import com.crm.auth.dto.response.RestorePasswordResponse;
 import com.crm.auth.facade.AuthFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
@@ -26,9 +25,9 @@ public class AuthController {
             @RequestBody
             SignInRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.signIn(request, deviceInfo);
+        return authFacade.signIn(request, userAgent);
     }
 
     @PostMapping("/sign-up")
@@ -37,9 +36,9 @@ public class AuthController {
             @RequestBody
             SignUpRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.signUp(request, deviceInfo);
+        return authFacade.signUp(request, userAgent);
     }
 
     @PostMapping("/refresh")
@@ -48,9 +47,9 @@ public class AuthController {
             @RequestBody
             RefreshTokenRequest request,
             @RequestHeader(USER_AGENT)
-            String deviceInfo
+            String userAgent
     ) {
-        return authFacade.refreshJwtToken(request, deviceInfo);
+        return authFacade.refreshJwtToken(request, userAgent);
     }
 
     @PostMapping("/logout")
@@ -61,34 +60,6 @@ public class AuthController {
             RefreshTokenRequest request
     ) {
         authFacade.logout(request);
-    }
-
-    @PostMapping("/restore-password-request")
-    public RestorePasswordResponse createRequestToRestorePassword(
-            @Valid
-            @RequestBody
-            RestorePasswordRequest request
-    ) {
-        return authFacade.createRequestToRestorePassword(request);
-    }
-
-    @PatchMapping("/restore-password-request/{requestId}/resend")
-    public RestorePasswordResponse resendVerificationCode(
-            @PathVariable("requestId") UUID requestId
-    ) {
-        return authFacade.resendVerificationCode(requestId);
-    }
-
-    @PutMapping("/restore-password-request/{requestId}/restore-password")
-    public JwtAuthenticationResponse restorePasswordByVerificationCode(
-            @PathVariable("requestId")
-            UUID requestId,
-            @Valid @RequestBody
-            VerificationCodeRequest request,
-            @RequestHeader(USER_AGENT)
-            String deviceInfo
-    ) {
-        return authFacade.restorePasswordByVerificationCode(requestId, request, deviceInfo);
     }
 
 }

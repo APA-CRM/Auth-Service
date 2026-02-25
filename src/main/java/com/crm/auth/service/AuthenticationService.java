@@ -9,6 +9,7 @@ import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.operation.UserCreatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,30 +18,38 @@ public class AuthenticationService {
     private final UserService userService;
     private final UserCreatorService userCreatorService;
     private final JwtService jwtService;
+    private final DeviceInfoService deviceInfoService;
     private final RefreshTokenService refreshTokenService;
 
-    public JwtAuthenticationResponse authenticateUser(User user, String deviceInfo) {
-        RefreshToken refreshToken = refreshTokenService.getRefreshTokenBySignInRequest(user, deviceInfo);
+    public JwtAuthenticationResponse authenticateUser(User user, String userAgent) {
+        String deviceInfo = deviceInfoService.getDeviceInfoFromUserAgent(userAgent);
 
-        String token = jwtService.generateToken(user.getId(), user.getLogin());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(deviceInfo, user);
+
+        refreshTokenService.deleteUserExpiredTokens(user);
+
+        String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
 
-    public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String deviceInfo) {
+    public JwtAuthenticationResponse signIn(SignInRequest signInRequest, String userAgent) {
 
-        User user = userService.validateUserForSignInRequest(signInRequest);
+        User user = userService.validateAndGetUserForSignInRequest(signInRequest);
 
-        return authenticateUser(user, deviceInfo);
+        return authenticateUser(user, userAgent);
     }
 
-    public JwtAuthenticationResponse signUp(SignUpRequest request, String deviceInfo) {
+    @Transactional
+    public JwtAuthenticationResponse signUp(SignUpRequest request, String userAgent) {
 
         User user = userCreatorService.createUser(request);
 
+        String deviceInfo = deviceInfoService.getDeviceInfoFromUserAgent(userAgent);
+
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(deviceInfo, user);
 
-        String token = jwtService.generateToken(user.getId(), user.getLogin());
+        String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
