@@ -2,9 +2,7 @@ package com.crm.auth.controller.internal;
 
 import com.crm.auth.facade.internal.InternalAuthFacade;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
-import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.dto.response.AuthResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +19,6 @@ public class InternalAuthController {
     @PostMapping("/authorize")
     public AuthResponse authorize(@RequestBody AuthorizationRequest request) {
         return internalAuthFacade.authorize(request);
-    }
-
-    @PostMapping("/authorize-and-check-access")
-    public AuthResponse authorizeAndCheckAccess(
-            @RequestBody AuthorizationWithUriAndHttpMethodRequest request,
-            HttpServletRequest servletRequest
-    ) {
-        return internalAuthFacade.authorizeAndCheckAccess(servletRequest, request);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.crm.auth.service;
 
+import com.crm.auth.cache.UserPermissionRepository;
 import com.crm.sharedlib.rbac.dto.ResourcePermission;
 import com.crm.sharedlib.rbac.dto.UserPermission;
-import com.crm.auth.cache.UserPermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

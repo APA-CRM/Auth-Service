@@ -1,7 +1,7 @@
 package com.crm.auth.cache;
 
-import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.sharedlib.rbac.constants.CacheConstants;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
