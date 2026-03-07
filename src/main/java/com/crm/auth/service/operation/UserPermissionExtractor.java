@@ -1,7 +1,7 @@
 package com.crm.auth.service.operation;
 
 import com.crm.auth.feign.MainClient;
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.auth.service.UserPermissionService;
 import com.crm.sharedlib.core.dto.response.OrganizationUserRolesResponse;
 import com.crm.sharedlib.core.exception.ForbiddenException;

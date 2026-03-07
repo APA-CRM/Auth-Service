@@ -1,7 +1,7 @@
 package com.crm.auth.service.checker;
 
-import com.crm.auth.persistance.entity.redis.ResourcePermission;
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.ResourcePermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.sharedlib.core.dto.request.AuthorizationWithUriAndHttpMethodRequest;
 import com.crm.sharedlib.core.enums.Action;
 import com.crm.sharedlib.core.enums.Resource;

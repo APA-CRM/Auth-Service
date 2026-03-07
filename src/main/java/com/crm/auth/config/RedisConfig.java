@@ -1,6 +1,6 @@
 package com.crm.auth.config;
 
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

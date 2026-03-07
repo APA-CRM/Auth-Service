@@ -1,7 +1,7 @@
 package com.crm.auth.service;
 
-import com.crm.auth.dto.JwtPayload;
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.JwtPayload;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.auth.service.checker.PermissionChecker;
 import com.crm.auth.service.operation.UserPermissionExtractor;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;

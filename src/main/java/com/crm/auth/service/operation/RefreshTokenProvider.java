@@ -30,7 +30,7 @@ public class RefreshTokenProvider {
 
         User user = refreshToken.getUser();
 
-        String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
+        String token = jwtService.generateToken(user.getId(), user.getLogin());
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }

@@ -2,7 +2,7 @@ package com.crm.auth.mapper;
 
 import com.crm.auth.persistance.entity.AccessControl;
 import com.crm.auth.persistance.entity.Role;
-import com.crm.auth.persistance.entity.redis.ResourcePermission;
+import com.crm.sharedlib.rbac.dto.ResourcePermission;
 import com.crm.sharedlib.core.enums.Action;
 import com.crm.sharedlib.core.enums.Resource;
 import org.springframework.stereotype.Component;

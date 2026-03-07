@@ -2,8 +2,8 @@ package com.crm.auth.service.operation;
 
 import com.crm.auth.mapper.AccessControlMapper;
 import com.crm.auth.persistance.entity.Role;
-import com.crm.auth.persistance.entity.redis.ResourcePermission;
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.ResourcePermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.auth.service.RoleService;
 import com.crm.auth.service.UserPermissionService;
 import lombok.RequiredArgsConstructor;

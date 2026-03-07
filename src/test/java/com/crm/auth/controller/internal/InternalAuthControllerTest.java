@@ -2,8 +2,8 @@ package com.crm.auth.controller.internal;
 
 import com.crm.auth.BaseIntegrationTest;
 import com.crm.auth.feign.MainClient;
-import com.crm.auth.persistance.entity.redis.ResourcePermission;
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.ResourcePermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
 import com.crm.auth.service.JwtService;
 import com.crm.auth.service.UserPermissionService;
 import com.crm.sharedlib.core.dto.request.AuthorizationRequest;
@@ -49,7 +49,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access expected success")
     public void authorizeAndCheckAccessExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+        final String token = jwtService.generateToken(1L, "login");
 
         AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
@@ -90,7 +90,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize expected success")
     public void authorizeExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+        final String token = jwtService.generateToken(1L, "login");
 
         AuthorizationRequest request = new AuthorizationRequest(
                 token, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
@@ -120,7 +120,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
             "classpath:sql/deleteTestUsers.sql"
     }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void authorizeAndCheckAccessWhenUserPermissionIsNotInCacheExpectedSuccess() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+        final String token = jwtService.generateToken(1L, "login");
 
         AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
@@ -176,7 +176,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
     public void authorizeAndCheckAccessWhenDoesNotHavePermissionExpectedForbidden() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+        final String token = jwtService.generateToken(1L, "login");
 
         AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 
@@ -211,7 +211,7 @@ class InternalAuthControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Authorize and check access when doesn't have permission to resource expected forbidden")
     public void authorizeAndCheckAccessWhenAccessControlsNotFoundExpectedForbidden() {
-        final String token = jwtService.generateToken(1L, "login", "Windows NT, Firefox, 122.0");
+        final String token = jwtService.generateToken(1L, "login");
 
         AuthorizationWithUriAndHttpMethodRequest request = new AuthorizationWithUriAndHttpMethodRequest();
 

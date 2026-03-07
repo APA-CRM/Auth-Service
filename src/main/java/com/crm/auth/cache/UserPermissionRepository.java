@@ -1,6 +1,7 @@
-package com.crm.auth.persistance.repository;
+package com.crm.auth.cache;
 
-import com.crm.auth.persistance.entity.redis.UserPermission;
+import com.crm.sharedlib.rbac.dto.UserPermission;
+import com.crm.sharedlib.rbac.constants.CacheConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +41,7 @@ public class UserPermissionRepository {
 
 
     private String getFormatedKey(Long organizationId, Long userId) {
-        return "organization:%d:user:%d:permissions".formatted(organizationId, userId);
+        return CacheConstants.USER_PERMISSION_FORMAT_KEY.formatted(organizationId, userId);
     }
 
 }
