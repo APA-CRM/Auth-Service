@@ -28,7 +28,7 @@ public class AuthenticationService {
 
         refreshTokenService.deleteUserExpiredTokens(user);
 
-        String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
+        String token = jwtService.generateToken(user.getId(), user.getLogin());
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }
@@ -49,7 +49,7 @@ public class AuthenticationService {
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(deviceInfo, user);
 
-        String token = jwtService.generateToken(user.getId(), user.getLogin(), deviceInfo);
+        String token = jwtService.generateToken(user.getId(), user.getLogin());
 
         return new JwtAuthenticationResponse(token, TokenType.BEARER, refreshToken.getToken());
     }

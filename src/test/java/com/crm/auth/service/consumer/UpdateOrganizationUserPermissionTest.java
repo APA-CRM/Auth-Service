@@ -1,7 +1,7 @@
 package com.crm.auth.service.consumer;
 
 import com.crm.auth.BaseIntegrationTestWithRabbitMQ;
-import com.crm.auth.persistance.repository.UserPermissionRepository;
+import com.crm.auth.cache.UserPermissionRepository;
 import com.crm.sharedlib.core.dto.amqp.OrgUserRoleChangedEvent;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;

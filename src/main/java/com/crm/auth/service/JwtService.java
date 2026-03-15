@@ -1,7 +1,7 @@
 package com.crm.auth.service;
 
-import com.crm.auth.dto.JwtPayload;
 import com.crm.sharedlib.core.exception.UnauthorizedException;
+import com.crm.sharedlib.rbac.dto.JwtPayload;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,23 +14,23 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static com.crm.sharedlib.rbac.constants.JwtConstants.USER_ID_KEY;
+import static com.crm.sharedlib.rbac.constants.JwtConstants.USER_LOGIN_KEY;
+
 @Service
 public class JwtService {
-
-    public static final String USER_ID_KEY = "userId";
-    public static final String USER_LOGIN_KEY = "login";
 
     @Value("${app.token.signing.key}")
     private String jwtSigningKey;
     @Value("${app.token.expiration}")
-    private Long EXPIRATION_TIME;
+    private Long expirationTime;
 
-    public String generateToken(Long userId, String login, String deviceInfo) {
+    public String generateToken(Long userId, String login) {
         return Jwts.builder()
                 .claim(USER_ID_KEY, userId.toString())
                 .claim(USER_LOGIN_KEY, login)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(EXPIRATION_TIME)))
+                .expiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationTime)))
                 .signWith(getSingingKey())
                 .compact();
     }
