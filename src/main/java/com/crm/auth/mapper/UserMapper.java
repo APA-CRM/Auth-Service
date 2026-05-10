@@ -2,6 +2,7 @@ package com.crm.auth.mapper;
 
 import com.crm.auth.dto.request.SignUpRequest;
 import com.crm.auth.dto.request.UserUpdateRequest;
+import com.crm.auth.dto.response.UserLightResponse;
 import com.crm.auth.persistance.entity.Role;
 import com.crm.auth.persistance.entity.User;
 import com.crm.sharedlib.core.dto.response.RoleLightResponse;
@@ -29,6 +30,8 @@ public abstract class UserMapper {
 
     @Mapping(expression = "java(getLightRoles(roles))", target = "roles")
     public abstract UserWithRoleResponse toUserWithRoleResponse(User user, @Nullable List<Role> roles);
+
+    public abstract UserLightResponse toLightResponse(User user);
 
     @Mapping(expression = "java(trimName(request.getFirstName()))", target = "firstName")
     @Mapping(expression = "java(trimName(request.getLastName()))", target = "lastName")

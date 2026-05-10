@@ -140,6 +140,28 @@ class InternalUsersControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Get user by ids expected success response")
+    public void getUserByIdsExpectedSuccess() {
+
+        final int userId = 101;
+
+        given()
+                .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER_NAME, userId)
+                .queryParam("userId", userId)
+                .when()
+                .get(BASE_URI)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .body("[0].id", is(userId))
+                .body("[0].login", notNullValue())
+                .body("[0].email", notNullValue())
+                .body("[0].fullName", is("Serious Sam"));
+    }
+
+    @Test
     @DisplayName("Get user by id expected success response")
     public void getUserByIdExpectedNotFound() {
 

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -75,6 +76,10 @@ public class UserService {
     public User getUserByIdOrThrowException(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
+    }
+
+    public List<User> getUsersByIds(Collection<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 
     public User getUserByEmailOrThrowException(String email) {
