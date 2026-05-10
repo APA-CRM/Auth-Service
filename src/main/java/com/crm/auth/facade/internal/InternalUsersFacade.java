@@ -1,5 +1,6 @@
 package com.crm.auth.facade.internal;
 
+import com.crm.auth.dto.response.UserLightResponse;
 import com.crm.auth.mapper.UserMapper;
 import com.crm.auth.persistance.entity.User;
 import com.crm.auth.service.UserService;
@@ -10,6 +11,8 @@ import com.crm.sharedlib.core.dto.response.UserResponse;
 import com.crm.sharedlib.core.dto.response.UserWithRoleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
+
+import java.util.List;
 
 @Facade
 @RequiredArgsConstructor
@@ -31,6 +34,14 @@ public class InternalUsersFacade {
         User user = userService.getUserByIdOrThrowException(userId);
 
         return userMapper.toDto(user);
+    }
+
+    public List<UserLightResponse> getUsersByIds(List<Long> usersIds) {
+        List<User> users = userService.getUsersByIds(usersIds);
+
+        return users.stream()
+                .map(userMapper::toLightResponse)
+                .toList();
     }
 
 }
