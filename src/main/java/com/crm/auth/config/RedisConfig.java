@@ -8,12 +8,13 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.integration.redis.util.RedisLockRegistry;
 
 @Configuration
 public class RedisConfig {
 
     @Bean
-    RedisTemplate<String, UserPermission> redisTemplate(
+    RedisTemplate<String, UserPermission> userPermissionRedisTemplate(
             RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper
     ) {
         RedisTemplate<String, UserPermission> template = new RedisTemplate<>();
@@ -25,6 +26,11 @@ public class RedisConfig {
         template.setKeySerializer(RedisSerializer.string());
 
         return template;
+    }
+
+    @Bean
+    RedisLockRegistry redisLockRegistry(RedisConnectionFactory factory) {
+        return new RedisLockRegistry(factory, "lock");
     }
 
 }

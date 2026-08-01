@@ -10,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,10 +26,34 @@ public class UserPermissionExtractor {
 
     public UserPermission getUserPermission(Long organizationId, Long userId) {
         return userPermissionService.getUserPermission(organizationId, userId).
-                orElseGet(() -> fetchUserPermissionFromMainServiceAndSave(organizationId, userId));
+                orElseGet(() -> lockAndGetUserPermission(organizationId, userId));
     }
 
-    private UserPermission fetchUserPermissionFromMainServiceAndSave(Long organizationId, Long userId) {
+    private UserPermission lockAndGetUserPermission(Long organizationId, Long userId) {
+        Lock lock = userPermissionService.getUserPermissionLock(organizationId, userId);
+
+        try {
+            if (!lock.tryLock(5, TimeUnit.SECONDS)) {
+                return userPermissionService.getUserPermission(organizationId, userId)
+                        .orElseThrow(() -> new ForbiddenException("Access controls not found"));
+            }
+
+            try {
+                return userPermissionService.getUserPermission(organizationId, userId)
+                        .orElseGet(() ->
+                                fetchUserPermissionFromMainServiceAndSave(organizationId, userId)
+                                        .orElseThrow(() -> new ForbiddenException("Access controls not found")));
+            } finally {
+                lock.unlock();
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while acquiring permission lock", e);
+        }
+    }
+
+    private Optional<UserPermission> fetchUserPermissionFromMainServiceAndSave(Long organizationId, Long userId) {
         log.debug("User permission not found in cache: Organization = {}, User = {}",
                 organizationId, userId
         );
@@ -36,11 +64,13 @@ public class UserPermissionExtractor {
             organizationUserRoles =
                     mainClient.getOrganizationUserRoles(organizationId, userId);
         } catch (NotFoundException e) {
-            throw new ForbiddenException("Access controls not found");
+            return Optional.empty();
         }
 
-        return userPermissionSaver.saveUserPermission(
+        UserPermission userPermission = userPermissionSaver.saveUserPermission(
                 organizationId, userId, organizationUserRoles.getRolesId()
         );
+
+        return Optional.of(userPermission);
     }
 }
