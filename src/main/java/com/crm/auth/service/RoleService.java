@@ -37,7 +37,7 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    public List<Role> getRolesById(Iterable<Long> ids) {
+    public List<Role> getRolesByIds(Iterable<Long> ids) {
         return roleRepository.findAllById(ids);
     }
 
