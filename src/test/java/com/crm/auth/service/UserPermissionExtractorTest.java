@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 
+import static com.crm.sharedlib.rbac.constants.CacheConstants.USER_PERMISSION_FORMAT_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +36,8 @@ class UserPermissionExtractorTest extends BaseIntegrationTestWithRedis {
 
     @Autowired
     private UserPermissionRepository userPermissionRepository;
-
+    @Autowired
+    private RedisTemplate<String, UserPermission> redisTemplate;
     @Autowired
     private UserPermissionExtractor userPermissionExtractor;
 
@@ -118,6 +121,10 @@ class UserPermissionExtractorTest extends BaseIntegrationTestWithRedis {
         } catch (InterruptedException | ExecutionException e) {
             fail("Error has occurred while getting user permissions from the futures");
         }
+
+        // Delete the cache value
+        redisTemplate.opsForValue()
+                .getAndDelete(USER_PERMISSION_FORMAT_KEY.formatted(organizationId, userId));
     }
 
     @Test
