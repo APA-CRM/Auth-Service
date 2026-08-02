@@ -35,4 +35,12 @@ public class UserPermissionService {
         return repository.getUserPermissionLock(organizationId, userId);
     }
 
+    public void lockFailure(Long organizationId, Long userId, Exception exception) {
+        repository.lockFailure(organizationId, userId, exception);
+    }
+
+    public boolean isFailureLockExists(Long organizationId, Long userId) {
+        return repository.isFailureLockExists(organizationId, userId);
+    }
+
 }

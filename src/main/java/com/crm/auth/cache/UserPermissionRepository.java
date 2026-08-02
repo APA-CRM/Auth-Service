@@ -17,12 +17,18 @@ import static com.crm.sharedlib.rbac.constants.CacheConstants.USER_PERMISSION_FO
 @RequiredArgsConstructor
 public class UserPermissionRepository {
 
+    private final static String FAILURE_SUFFIX_KEY = ":failure";
+
     private final RedisTemplate<String, UserPermission> userPermissionRedisTemplate;
+    private final RedisTemplate<String, String> lockRedisTemplate;
 
     private final RedisLockRegistry lockRegistry;
 
-    @Value("${app.redis.user-permission.ttl}")
+    @Value("${app.user-permission.ttl}")
     private Integer userPermissionTtl;
+
+    @Value("${app.user-permission.failure-lock.ttl}")
+    private Integer userPermissionFailureLockTtl;
 
     public void save(
             Long organizationId,
@@ -34,6 +40,22 @@ public class UserPermissionRepository {
         userPermissionRedisTemplate
                 .opsForValue()
                 .set(key, userPermission, userPermissionTtl, TimeUnit.SECONDS);
+    }
+
+    public void lockFailure(Long organizationId, Long userId, Exception exception) {
+        String key = getFormatedKey(organizationId, userId) + FAILURE_SUFFIX_KEY;
+
+        String value = exception.getClass().getSimpleName();
+
+        lockRedisTemplate.opsForValue().set(
+                key, value, userPermissionFailureLockTtl, TimeUnit.SECONDS
+        );
+    }
+
+    public boolean isFailureLockExists(Long organizationId, Long userId) {
+        String key = getFormatedKey(organizationId, userId) + FAILURE_SUFFIX_KEY;
+
+        return lockRedisTemplate.opsForValue().get(key) != null;
     }
 
     public Optional<UserPermission> findById(Long organizationId, Long userId) {

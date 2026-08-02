@@ -19,6 +19,8 @@ import java.util.concurrent.locks.Lock;
 @RequiredArgsConstructor
 public class UserPermissionExtractor {
 
+    private static final int LOCK_TIMEOUT = 5;
+
     private final UserPermissionService userPermissionService;
     private final UserPermissionSaver userPermissionSaver;
 
@@ -33,16 +35,26 @@ public class UserPermissionExtractor {
         Lock lock = userPermissionService.getUserPermissionLock(organizationId, userId);
 
         try {
-            if (!lock.tryLock(5, TimeUnit.SECONDS)) {
+            ForbiddenException forbiddenException = new ForbiddenException("Access controls not found");
+
+            if (!lock.tryLock(LOCK_TIMEOUT, TimeUnit.SECONDS)) {
                 return userPermissionService.getUserPermission(organizationId, userId)
-                        .orElseThrow(() -> new ForbiddenException("Access controls not found"));
+                        .orElseThrow(() -> forbiddenException);
             }
 
             try {
+                if (userPermissionService.isFailureLockExists(organizationId, userId)) {
+                    throw forbiddenException;
+                }
+
                 return userPermissionService.getUserPermission(organizationId, userId)
                         .orElseGet(() ->
                                 fetchUserPermissionFromMainServiceAndSave(organizationId, userId)
-                                        .orElseThrow(() -> new ForbiddenException("Access controls not found")));
+                                        .orElseThrow(() -> {
+                                            userPermissionService.lockFailure(organizationId, userId, forbiddenException);
+
+                                            return forbiddenException;
+                                        }));
             } finally {
                 lock.unlock();
             }
