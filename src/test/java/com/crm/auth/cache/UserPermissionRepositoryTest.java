@@ -1,18 +1,14 @@
 package com.crm.auth.cache;
 
-import com.crm.auth.BaseIntegrationTest;
+import com.crm.auth.BaseIntegrationTestWithRedis;
 import com.crm.sharedlib.core.enums.Action;
 import com.crm.sharedlib.core.enums.Resource;
 import com.crm.sharedlib.rbac.dto.ResourcePermission;
 import com.crm.sharedlib.rbac.dto.UserPermission;
-import com.redis.testcontainers.RedisContainer;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,30 +17,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class UserPermissionRepositoryTest extends BaseIntegrationTest {
-
-    private static RedisContainer redisContainer;
+class UserPermissionRepositoryTest extends BaseIntegrationTestWithRedis {
 
     @Autowired
     private UserPermissionRepository repository;
-
-    @BeforeAll
-    public static void initRedisContainer() {
-        int exposedPort = 6379;
-
-        redisContainer = new RedisContainer("redis:8.4.0-alpine");
-        redisContainer.withExposedPorts(exposedPort);
-        redisContainer.withLogConsumer(new Slf4jLogConsumer(log));
-        redisContainer.start();
-
-        System.setProperty("spring.data.redis.host", redisContainer.getHost());
-        System.setProperty("spring.data.redis.port", redisContainer.getFirstMappedPort().toString());
-    }
-
-    @AfterAll
-    public static void stopRedisContainer() {
-        redisContainer.stop();
-    }
 
     @Test
     @DisplayName("Save user permission expected success")

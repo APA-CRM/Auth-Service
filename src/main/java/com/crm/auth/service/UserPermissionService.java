@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,18 @@ public class UserPermissionService {
 
     public Optional<UserPermission> getUserPermission(Long organizationId, Long userId) {
         return repository.findById(organizationId, userId);
+    }
+
+    public Lock getUserPermissionLock(Long organizationId, Long userId) {
+        return repository.getUserPermissionLock(organizationId, userId);
+    }
+
+    public void lockFailure(Long organizationId, Long userId, Exception exception) {
+        repository.lockFailure(organizationId, userId, exception);
+    }
+
+    public boolean isFailureLockExists(Long organizationId, Long userId) {
+        return repository.isFailureLockExists(organizationId, userId);
     }
 
 }

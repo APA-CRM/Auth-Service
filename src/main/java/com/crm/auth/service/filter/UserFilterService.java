@@ -61,7 +61,7 @@ public class UserFilterService {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
 
-        Map<Long, Role> roleMap = roleService.getRolesById(allRoleIds).stream()
+        Map<Long, Role> roleMap = roleService.getRolesByIds(allRoleIds).stream()
                 .collect(Collectors.toMap(Role::getId, Function.identity()));
 
         return mapUsersToResponse(filteredUsers, userRolesMap, roleMap);

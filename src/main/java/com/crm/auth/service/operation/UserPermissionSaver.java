@@ -23,7 +23,7 @@ public class UserPermissionSaver {
     public UserPermission saveUserPermission(Long organizationId, Long userId, List<Long> rolesId) {
 
         List<Role> roles =
-                roleService.getRolesById(rolesId);
+                roleService.getRolesByIds(rolesId);
 
         List<ResourcePermission> resourcePermission =
                 accessControlMapper.toResourcePermission(roles);

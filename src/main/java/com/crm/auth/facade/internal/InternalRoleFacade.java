@@ -42,7 +42,7 @@ public class InternalRoleFacade {
     }
 
     public List<RoleResponse> getRolesById(List<Long> rolesId) {
-        List<Role> roles = roleService.getRolesById(rolesId);
+        List<Role> roles = roleService.getRolesByIds(rolesId);
 
         return roles.stream()
                 .map(roleMapper::toDto)
